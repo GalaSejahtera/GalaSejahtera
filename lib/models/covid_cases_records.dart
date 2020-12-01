@@ -1,16 +1,17 @@
 class CovidCasesRecords {
   final List<StateModel> states;
-  final int last_updated;
+  final int lastUpdated;
 
-  CovidCasesRecords({this.states, this.last_updated});
+  CovidCasesRecords({this.states, this.lastUpdated});
 
   factory CovidCasesRecords.fromJson(Map<String, dynamic> json) {
     var list = json['states'] as List;
-    List<StateModel> stateList = list.map((i) => StateModel.fromJson(i)).toList();
+    List<StateModel> stateList =
+        list.map((i) => StateModel.fromJson(i)).toList();
 
     return CovidCasesRecords(
       states: stateList,
-      last_updated: json['last_updated'],
+      lastUpdated: json['last_updated'],
     );
   }
 }
@@ -25,7 +26,7 @@ class StateModel {
   factory StateModel.fromJson(Map<String, dynamic> json) {
     var list = json['districts'] as List;
     List<DistrictModel> districtList =
-    list.map((i) => DistrictModel.fromJson(i)).toList();
+        list.map((i) => DistrictModel.fromJson(i)).toList();
 
     return StateModel(
       name: json['name'],
@@ -48,4 +49,3 @@ class DistrictModel {
     );
   }
 }
-

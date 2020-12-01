@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/screens/home/home_screen.dart';
 import 'package:gala_sejahtera/screens/login_screen/login_screen.dart';
+import 'package:gala_sejahtera/screens/nav_bar/nav_bar.dart';
 import 'package:gala_sejahtera/screens/registration_screen/registration_screen.dart';
 import 'package:gala_sejahtera/screens/second/second_screen.dart';
 import 'package:gala_sejahtera/screens/welcome_screen/welcome_screen.dart';
@@ -18,6 +19,7 @@ class GalaSejahtera extends StatelessWidget {
       RegistrationScreen.id: (context) => RegistrationScreen(),
       HomeScreen.id: (context) => HomeScreen(),
       SecondScreen.id: (context) => SecondScreen(),
+      NavBar.id: (context) => NavBar(),
       //other screens
     });
   }
