@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gala_sejahtera/widgets/custom_autocomplete.dart';
 import 'package:gala_sejahtera/widgets/custom_field.dart';
 import 'package:gala_sejahtera/widgets/custom_iconbutton.dart';
 import 'package:gala_sejahtera/widgets/display_box.dart';
@@ -37,14 +38,12 @@ class TrackerScreen extends StatelessWidget {
           children: <Widget>[
             Container(
               margin: EdgeInsets.all(10),
-              child: CustomField(
-                keyboardType: TextInputType.text,
-                obscureText: false,
-                onChanged: (value) {
-                  // do nothing
-                },
-                hintText: 'Search for district',
-              ),
+              child: CustomAutocomplete(
+                  onChanged: (value) {
+                    // do nothing
+                  },
+                  hintText: 'Search for district',
+                  suggestions: ["Kuala Lumpur", "Selangor", "Johor"]),
             ),
             Row(children: <Widget>[
               DisplayBox(
