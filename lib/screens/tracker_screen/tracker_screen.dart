@@ -51,7 +51,7 @@ class TrackerScreen extends StatelessWidget {
                 description: "Nearby Symptomatic Users",
               ),
               DisplayBox(
-                title: '20',
+                title: '2000',
                 description: "Covid-19 Cases in Your District",
               ),
             ]),

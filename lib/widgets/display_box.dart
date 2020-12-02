@@ -23,13 +23,17 @@ class DisplayBox extends StatelessWidget {
               child: Align(
                 alignment: Alignment.center,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
                       title,
                       style: TextStyle(
                         color: Color(0xffFD3030).withOpacity(0.7),
-                        fontSize: 80,
+                        fontSize: 40,
                       ),
+                    ),
+                    SizedBox(
+                      height: 5,
                     ),
                     Text(
                       description,
