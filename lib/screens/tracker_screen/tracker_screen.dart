@@ -55,6 +55,13 @@ class TrackerScreen extends StatelessWidget {
                 description: "Covid-19 Cases in Your District",
               ),
             ]),
+            Row(children: <Widget>[
+              DisplayBox(
+                title: '10',
+                description: "Covid-19 Cases in Kuala Lumpur",
+                hasClose: true,
+              ),
+            ]),
           ],
         ),
       ]),
