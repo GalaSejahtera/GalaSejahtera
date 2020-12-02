@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/widgets/custom_field.dart';
+import 'package:gala_sejahtera/widgets/custom_iconbutton.dart';
 import 'package:gala_sejahtera/widgets/display_box.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -15,11 +16,22 @@ class TrackerScreen extends StatelessWidget {
       margin: EdgeInsets.only(top: 40),
       child: Stack(fit: StackFit.expand, children: <Widget>[
         InteractiveViewer(
-          panEnabled: true, // Set it to false to prevent panning.
+          panEnabled: true,
           boundaryMargin: EdgeInsets.all(20),
           minScale: 0.5,
           maxScale: 3.0,
           child: svg,
+        ),
+        Positioned(
+          bottom: 30,
+          left: 30,
+          child: CustomIconButton(icon: Icon(Icons.history), onPressed: () {}),
+        ),
+        Positioned(
+          bottom: 30,
+          right: 30,
+          child: CustomIconButton(
+              icon: Icon(Icons.power_settings_new), onPressed: () {}),
         ),
         Column(
           children: <Widget>[
