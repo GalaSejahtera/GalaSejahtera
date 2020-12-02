@@ -42,7 +42,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               CustomField(
                 keyboardType: TextInputType.emailAddress,
-                obscureText: false,
                 onChanged: (value) {
                   email = value;
                 },
@@ -52,7 +51,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 10.0,
               ),
               CustomField(
-                keyboardType: TextInputType.text,
                 obscureText: true,
                 onChanged: (value) {
                   password = value;

@@ -8,7 +8,10 @@ class CustomField extends StatelessWidget {
   final TextInputType keyboardType;
 
   const CustomField(
-      {this.keyboardType, this.obscureText, this.onChanged, this.hintText});
+      {this.keyboardType = TextInputType.text,
+      this.obscureText = false,
+      this.onChanged,
+      this.hintText});
 
   @override
   Widget build(BuildContext context) {
