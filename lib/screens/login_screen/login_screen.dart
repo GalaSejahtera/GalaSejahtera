@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gala_sejahtera/screens/home/home_screen.dart';
 import 'package:gala_sejahtera/screens/nav_bar/nav_bar.dart';
 import 'package:gala_sejahtera/utils/constants.dart';
+import 'package:gala_sejahtera/widgets/custom_field.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -20,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xff60A1DD),
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
         child: Padding(
@@ -41,24 +41,24 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 height: 48.0,
               ),
-              TextField(
+              CustomField(
                 keyboardType: TextInputType.emailAddress,
-                textAlign: TextAlign.center,
+                obscureText: false,
                 onChanged: (value) {
                   email = value;
                 },
-                decoration: kTextFieldDecoration.copyWith(hintText: 'Email'),
+                hintText: 'Email',
               ),
               SizedBox(
-                height: 8.0,
+                height: 10.0,
               ),
-              TextField(
+              CustomField(
+                keyboardType: TextInputType.text,
                 obscureText: true,
-                textAlign: TextAlign.center,
                 onChanged: (value) {
                   password = value;
                 },
-                decoration: kTextFieldDecoration.copyWith(hintText: 'Password'),
+                hintText: 'Password',
               ),
               SizedBox(
                 height: 24.0,

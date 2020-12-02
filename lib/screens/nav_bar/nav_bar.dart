@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/screens/tracker_screen/tracker_screen.dart';
-import 'package:gala_sejahtera/widgets/display_box.dart';
 
 class NavBar extends StatefulWidget {
   static const String id = 'nav_bar';
