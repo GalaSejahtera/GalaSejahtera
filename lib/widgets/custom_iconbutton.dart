@@ -4,8 +4,10 @@ class CustomIconButton extends StatelessWidget {
   final Icon icon;
   final Function onPressed;
   final String title;
+  final bool active;
 
-  const CustomIconButton({this.icon, this.onPressed, this.title = ""});
+  const CustomIconButton(
+      {this.icon, this.onPressed, this.title = "", this.active = false});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +19,8 @@ class CustomIconButton extends StatelessWidget {
         child: Ink(
           width: 60,
           height: 60,
-          decoration: const ShapeDecoration(
-            color: Color(0xffFD3030),
+          decoration: ShapeDecoration(
+            color: active ? Color(0xffFD3030) : Color(0xfffa7070),
             shape: CircleBorder(),
           ),
           child: IconButton(

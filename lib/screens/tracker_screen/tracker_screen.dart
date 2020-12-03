@@ -17,6 +17,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
   RestApiServices restApiServices = RestApiServices();
   TextEditingController controller = TextEditingController();
   bool showHistory = false;
+  bool trackLocation = false;
 
   Future<CovidCasesRecords> covidCasesRecords;
   String selected = "";
@@ -47,6 +48,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
           child: CustomIconButton(
               title: "History",
               icon: Icon(Icons.history),
+              active: showHistory,
               onPressed: () {
                 setState(() {
                   showHistory = true;
@@ -59,7 +61,17 @@ class _TrackerScreenState extends State<TrackerScreen> {
           child: CustomIconButton(
               title: "Track Location",
               icon: Icon(Icons.power_settings_new),
-              onPressed: () {}),
+              active: trackLocation,
+              onPressed: () {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(trackLocation
+                      ? "Disabled Location Tracking"
+                      : "Enabled Location Tracking"),
+                ));
+                setState(() {
+                  trackLocation = !trackLocation;
+                });
+              }),
         ),
         Column(
           children: <Widget>[
