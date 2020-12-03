@@ -51,7 +51,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
               active: showHistory,
               onPressed: () {
                 setState(() {
-                  showHistory = true;
+                  showHistory = !showHistory;
                 });
               }),
         ),
