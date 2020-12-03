@@ -33,7 +33,7 @@ class CustomAutocomplete extends StatelessWidget {
           );
         },
         onSuggestionSelected: (suggestion) {
-          // do nothing
+          onChanged(suggestion);
         },
       ),
     );

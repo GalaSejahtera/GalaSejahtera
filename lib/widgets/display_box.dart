@@ -4,8 +4,10 @@ class DisplayBox extends StatelessWidget {
   final String title;
   final String description;
   final bool hasClose;
+  final Function onClose;
 
-  const DisplayBox({this.title, this.description, this.hasClose = false});
+  const DisplayBox(
+      {this.title, this.description, this.hasClose = false, this.onClose});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +58,9 @@ class DisplayBox extends StatelessWidget {
                 icon: Icon(Icons.cancel_outlined),
                 iconSize: 30,
                 color: Color(0xffFD3030).withOpacity(0.7),
-                onPressed: () {},
+                onPressed: () {
+                  onClose();
+                },
               ),
             ),
         ],
