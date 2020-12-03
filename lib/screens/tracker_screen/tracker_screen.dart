@@ -43,8 +43,9 @@ class _TrackerScreenState extends State<TrackerScreen> {
         ),
         Positioned(
           bottom: 30,
-          left: 30,
+          left: 35,
           child: CustomIconButton(
+              title: "History",
               icon: Icon(Icons.history),
               onPressed: () {
                 setState(() {
@@ -54,9 +55,11 @@ class _TrackerScreenState extends State<TrackerScreen> {
         ),
         Positioned(
           bottom: 30,
-          right: 30,
+          right: 35,
           child: CustomIconButton(
-              icon: Icon(Icons.power_settings_new), onPressed: () {}),
+              title: "Track Location",
+              icon: Icon(Icons.power_settings_new),
+              onPressed: () {}),
         ),
         Column(
           children: <Widget>[
