@@ -14,6 +14,7 @@ class TrackerScreen extends StatefulWidget {
 
 class _TrackerScreenState extends State<TrackerScreen> {
   RestApiServices restApiServices = RestApiServices();
+  TextEditingController controller = TextEditingController();
 
   Future<CovidCasesRecords> covidCasesRecords;
   String selected = "";
@@ -54,9 +55,11 @@ class _TrackerScreenState extends State<TrackerScreen> {
             Container(
               margin: EdgeInsets.all(10),
               child: CustomAutocomplete(
+                  typeAheadController: controller,
                   onChanged: (value) {
                     setState(() {
                       selected = value;
+                      controller.text = value;
                     });
                   },
                   hintText: 'Search for district',
