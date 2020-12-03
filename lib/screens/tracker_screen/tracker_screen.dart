@@ -6,6 +6,7 @@ import 'package:gala_sejahtera/widgets/custom_autocomplete.dart';
 import 'package:gala_sejahtera/widgets/custom_iconbutton.dart';
 import 'package:gala_sejahtera/widgets/display_box.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gala_sejahtera/widgets/history_component.dart';
 
 class TrackerScreen extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class TrackerScreen extends StatefulWidget {
 class _TrackerScreenState extends State<TrackerScreen> {
   RestApiServices restApiServices = RestApiServices();
   TextEditingController controller = TextEditingController();
+  bool showHistory = false;
 
   Future<CovidCasesRecords> covidCasesRecords;
   String selected = "";
@@ -42,7 +44,13 @@ class _TrackerScreenState extends State<TrackerScreen> {
         Positioned(
           bottom: 30,
           left: 30,
-          child: CustomIconButton(icon: Icon(Icons.history), onPressed: () {}),
+          child: CustomIconButton(
+              icon: Icon(Icons.history),
+              onPressed: () {
+                setState(() {
+                  showHistory = true;
+                });
+              }),
         ),
         Positioned(
           bottom: 30,
@@ -65,16 +73,25 @@ class _TrackerScreenState extends State<TrackerScreen> {
                   hintText: 'Search for district',
                   suggestions: ["Kuala Lumpur", "Selangor", "Johor"]),
             ),
-            Row(children: <Widget>[
-              DisplayBox(
-                title: '10',
-                description: "Nearby Symptomatic Users",
-              ),
-              DisplayBox(
-                title: '2000',
-                description: "Covid-19 Cases in Your District",
-              ),
-            ]),
+            if (!showHistory)
+              Row(children: <Widget>[
+                DisplayBox(
+                  title: '10',
+                  description: "Nearby Symptomatic Users",
+                ),
+                DisplayBox(
+                  title: '2000',
+                  description: "Covid-19 Cases in Your District",
+                ),
+              ]),
+            if (showHistory)
+              HistoryComponent(
+                  districts: ["Kuala Lumpur", "Selangor", "Johor"],
+                  onClose: () {
+                    setState(() {
+                      showHistory = false;
+                    });
+                  }),
             if (selected != "")
               Row(children: <Widget>[
                 DisplayBox(
