@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/screens/tracker_screen/tracker_screen.dart';
+import 'package:gala_sejahtera/screens/screening_screen/screening_navigator.dart';
 
 class NavBar extends StatefulWidget {
   static const String id = 'nav_bar';
@@ -23,10 +24,7 @@ class _NavBarState extends State<NavBar> {
       'Index 2: News',
       style: optionStyle,
     ),
-    Text(
-      'Index 3: Screen',
-      style: optionStyle,
-    ),
+    ScreeningNavigator(),
   ];
 
   void _onItemTapped(int index) {
