@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/screens/screening_screen/screening_screen.dart';
 import 'take_assessment_screen.dart';
+import 'assessment_history.dart';
 
 class ScreeningNavigator extends StatefulWidget {
   @override
@@ -23,6 +24,8 @@ class _ScreeningNavigatorState extends State<ScreeningNavigator> {
                 return ScreeningScreen();
               case '/Assessment':
                 return TakeAssessmentScreen();
+              case '/AssessmentHistory':
+                return AssessmentHistoryScreen();
             }
           },
         );

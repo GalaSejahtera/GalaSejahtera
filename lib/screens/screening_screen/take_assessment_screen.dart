@@ -10,6 +10,9 @@ class _TakeAssessmentScreenState extends State<TakeAssessmentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Take Assessment'),
+      ),
       backgroundColor: Color(0xff60A1DD),
       body: Padding(
         padding: EdgeInsets.all(24.0),

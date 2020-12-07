@@ -40,7 +40,8 @@ class _ScreeningScreenState extends State<ScreeningScreen> {
             RoundedButton(
               title: 'View History',
               color: Colors.black,
-              onPressed: () => {print('view history')},
+              onPressed: () =>
+                  Navigator.pushNamed(context, '/AssessmentHistory'),
             )
           ],
         ),
