@@ -5,6 +5,7 @@ import 'package:gala_sejahtera/screens/second/second_screen.dart';
 class HomeScreen extends StatelessWidget {
   static const String id = 'home_screen';
 
+//testing screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
