@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gala_sejahtera/screens/news_screen/news_navigator.dart';
 import 'package:gala_sejahtera/screens/tracker_screen/tracker_screen.dart';
 import 'package:gala_sejahtera/screens/screening_screen/screening_navigator.dart';
 
@@ -20,10 +21,7 @@ class _NavBarState extends State<NavBar> {
       style: optionStyle,
     ),
     TrackerScreen(),
-    Text(
-      'Index 2: News',
-      style: optionStyle,
-    ),
+    NewsNavigator(),
     ScreeningNavigator(),
   ];
 
