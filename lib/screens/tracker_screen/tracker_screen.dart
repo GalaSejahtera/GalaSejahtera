@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/models/covid_cases_records.dart';
@@ -22,10 +24,85 @@ class _TrackerScreenState extends State<TrackerScreen> {
   Future<CovidCasesRecords> covidCasesRecords;
   String selected = "";
 
+  LocationPermission permission;
+  bool isLocationServiceEnabled;
+  StreamSubscription<Position> locationSubscriber;
+
   @override
   void initState() {
     super.initState();
     covidCasesRecords = restApiServices.fetchCovidCasesRecordsData();
+  }
+
+  void checkLocationPermission() async {
+    // app permission to access location
+    permission = await Geolocator.checkPermission();
+    // device location service
+    isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    // check if location service is disabled
+    if (!isLocationServiceEnabled) {
+      setState(() {
+        trackLocation = false;
+      });
+
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("Please turn on location service!"),
+        backgroundColor: Color(0xFFFF0000),
+      ));
+    }
+
+    // handle location disabled forever (never ask again)
+    if (permission == LocationPermission.deniedForever) {
+      setState(() {
+        trackLocation = false;
+      });
+
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("Please allow the application to access location!"),
+        backgroundColor: Color(0xFFFF0000),
+      ));
+    }
+
+    // permission to access location is denied, request for the permission
+    if (permission != LocationPermission.whileInUse &&
+        permission != LocationPermission.always) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission != LocationPermission.whileInUse &&
+        permission != LocationPermission.always) {
+      setState(() {
+        trackLocation = false;
+      });
+    }
+
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text("Enabled Location Tracking"),
+      backgroundColor: Color(0xFF0000FF),
+    ));
+  }
+
+  void countinuousLocationTracking() async {
+    if (trackLocation) {
+      // update location every 5 seconds
+      locationSubscriber =
+          Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.high, intervalDuration: new Duration(seconds: 5))
+              .listen((Position position) {
+        print(position == null
+            ? 'Unknown'
+            : position.latitude.toString() +
+                ', ' +
+                position.longitude.toString());
+      });
+
+      return;
+    } 
+    
+    if (locationSubscriber != null) {
+      locationSubscriber.cancel();
+      locationSubscriber = null;
+    }
   }
 
   @override
@@ -63,14 +140,19 @@ class _TrackerScreenState extends State<TrackerScreen> {
               icon: Icon(Icons.power_settings_new),
               active: trackLocation,
               onPressed: () {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text(trackLocation
-                      ? "Disabled Location Tracking"
-                      : "Enabled Location Tracking"),
-                ));
                 setState(() {
                   trackLocation = !trackLocation;
                 });
+
+                if (!trackLocation) {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text("Disabled Location Tracking"),
+                  ));
+                } else {
+                  checkLocationPermission();
+                }
+
+                countinuousLocationTracking();
               }),
         ),
         Column(
