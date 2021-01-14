@@ -13,10 +13,82 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   String email;
+  String emailErrorMessage = '';
+  bool emailError = false;
+
   String fullName;
+  String fullNameErrorMessage = '';
+  bool fullNameError = false;
+
   String username;
+  String usernameErrorMessage = '';
+  bool usernameError = false;
+
   String password;
+  String passwordErrorMessage = '';
+  bool passwordError = false;
+
   bool showSpinner = false;
+
+  void validateEmail(String value) {
+    setState(() {
+      //check if valid email format (xxx@xxx.x)
+      if (!RegExp(
+              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+          .hasMatch(value)) {
+        emailError = true;
+        emailErrorMessage = 'Email is not valid';
+      } else {
+        emailError = false;
+        emailErrorMessage = '';
+      }
+    });
+  }
+
+  void validateFullName(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        fullNameError = true;
+        fullNameErrorMessage = 'Full Name is empty';
+      } else if (value.length < 6) {
+        fullNameError = true;
+        fullNameErrorMessage = 'Full Name is less than 6';
+      } else {
+        fullNameError = false;
+        fullNameErrorMessage = '';
+      }
+    });
+  }
+
+  void validateUsername(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        usernameError = true;
+        usernameErrorMessage = 'Username is empty';
+      } else if (value.length < 6) {
+        usernameError = true;
+        usernameErrorMessage = 'Username is less than 6';
+      } else {
+        usernameError = false;
+        usernameErrorMessage = '';
+      }
+    });
+  }
+
+  void validatePassword(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        passwordError = true;
+        passwordErrorMessage = 'Password is empty';
+      } else if (value.length < 6) {
+        passwordError = true;
+        passwordErrorMessage = 'Password is less than 6';
+      } else {
+        passwordError = false;
+        passwordErrorMessage = '';
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +117,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               CustomField(
                 keyboardType: TextInputType.emailAddress,
                 obscureText: false,
+                error: emailError,
+                errorMessage: emailErrorMessage,
                 onChanged: (value) {
+                  validateEmail(value);
                   email = value;
                 },
                 hintText: 'Email',
@@ -54,7 +129,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 8.0,
               ),
               CustomField(
+                error: fullNameError,
+                errorMessage: fullNameErrorMessage,
                 onChanged: (value) {
+                  validateFullName(value);
                   fullName = value;
                 },
                 hintText: 'Full name',
@@ -63,7 +141,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 8.0,
               ),
               CustomField(
+                error: usernameError,
+                errorMessage: usernameErrorMessage,
                 onChanged: (value) {
+                  validateUsername(value);
                   username = value;
                 },
                 hintText: 'Username',
@@ -72,7 +153,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 8.0,
               ),
               CustomField(
+                error: passwordError,
+                errorMessage: passwordErrorMessage,
                 onChanged: (value) {
+                  validatePassword(value);
                   password = value;
                 },
                 hintText: 'Password',

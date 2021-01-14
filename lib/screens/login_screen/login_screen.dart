@@ -12,9 +12,45 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String email;
-  String password;
   bool showSpinner = false;
+
+  String email;
+  String emailErrorMessage = '';
+  bool emailError = false;
+
+  String password;
+  String passwordErrorMessage = '';
+  bool passwordError = false;
+
+  void validateEmail(String value) {
+    setState(() {
+      //check if valid email format (xxx@xxx.x)
+      if (!RegExp(
+              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+          .hasMatch(value)) {
+        emailError = true;
+        emailErrorMessage = 'Email is not valid';
+      } else {
+        emailError = false;
+        emailErrorMessage = '';
+      }
+    });
+  }
+
+  void validatePassword(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        passwordError = true;
+        passwordErrorMessage = 'Password is empty';
+      } else if (value.length < 6) {
+        passwordError = true;
+        passwordErrorMessage = 'Password is less than 6';
+      } else {
+        passwordError = false;
+        passwordErrorMessage = '';
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +78,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               CustomField(
                 keyboardType: TextInputType.emailAddress,
+                error: emailError,
+                errorMessage: emailErrorMessage,
                 onChanged: (value) {
+                  validateEmail(value);
                   email = value;
                 },
                 hintText: 'Email',
@@ -52,7 +91,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               CustomField(
                 obscureText: true,
+                error: passwordError,
+                errorMessage: passwordErrorMessage,
                 onChanged: (value) {
+                  validatePassword(value);
                   password = value;
                 },
                 hintText: 'Password',
