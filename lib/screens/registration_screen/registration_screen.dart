@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gala_sejahtera/screens/home/home_screen.dart';
+import 'package:gala_sejahtera/screens/nav_bar/nav_bar.dart';
 import 'package:gala_sejahtera/widgets/custom_field.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -93,6 +93,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       backgroundColor: Color(0xff60A1DD),
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
@@ -106,7 +110,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 child: Hero(
                   tag: 'logo',
                   child: Container(
-                    height: 200.0,
+                    height: 100.0,
                     child: Image.asset('assets/images/logo-my-sejahtera.png'),
                   ),
                 ),
@@ -172,7 +176,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   setState(() {
                     showSpinner = true;
                   });
-                  Navigator.pushNamed(context, HomeScreen.id);
+                  Navigator.pushNamed(context, NavBar.id);
                   setState(() {
                     showSpinner = false;
                   });

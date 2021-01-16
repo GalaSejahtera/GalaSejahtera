@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gala_sejahtera/screens/home_screen/home_screen.dart';
 import 'package:gala_sejahtera/screens/news_screen/news_navigator.dart';
-import 'package:gala_sejahtera/screens/tracker_screen/tracker_screen.dart';
 import 'package:gala_sejahtera/screens/screening_screen/screening_navigator.dart';
+import 'package:gala_sejahtera/screens/tracker_screen/tracker_screen.dart';
 
 class NavBar extends StatefulWidget {
   static const String id = 'nav_bar';
@@ -13,13 +14,9 @@ class NavBar extends StatefulWidget {
 
 class _NavBarState extends State<NavBar> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white);
+
   static List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
+    HomeScreen(),
     TrackerScreen(),
     NewsNavigator(),
     ScreeningNavigator(),
