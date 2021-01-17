@@ -37,6 +37,10 @@ dependencies:
   # For location tracking
   geolocator: ^6.1.13
 
+  # For notification
+  rxdart: ^0.25.0
+  flutter_local_notifications: ^3.0.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
