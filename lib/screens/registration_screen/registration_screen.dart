@@ -110,8 +110,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 child: Hero(
                   tag: 'logo',
                   child: Container(
-                    height: 100.0,
-                    child: Image.asset('assets/images/logo-my-sejahtera.png'),
+                    height: 60.0,
+                    child: Image.asset('assets/images/logo.png'),
                   ),
                 ),
               ),

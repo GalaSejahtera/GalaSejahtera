@@ -14,9 +14,9 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name="io.flutter.app.FlutterApplication"
-        android:label="gala_sejahtera"
-        android:icon="@mipmap/ic_launcher">
+            android:name="io.flutter.app.FlutterApplication"
+            android:label="Gala Sejahtera"
+            android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
