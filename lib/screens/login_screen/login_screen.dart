@@ -7,6 +7,7 @@ import 'package:gala_sejahtera/widgets/custom_field.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login_screen';
@@ -84,6 +85,26 @@ class _LoginScreenState extends State<LoginScreen>
     });
   }
 
+  void loginUser() async {
+    AuthCredentials ac = await restApiServices.userLogin(
+        email: email, password: password);
+    
+    if (ac != null) {
+      // save auth details in state
+      Provider.of<AuthCredentials>(context, listen: false)
+        .createNewCredentials(ac);
+      //navigate
+      Navigator.pushNamed(context, NavBar.id);
+
+      return;
+    }
+
+    SweetAlert.show(
+      context,
+      subtitle: 'Invalid Email or Password.',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,11 +167,7 @@ class _LoginScreenState extends State<LoginScreen>
                   setState(() {
                     showSpinner = true;
                   });
-                  AuthCredentials ac = await restApiServices.userLogin(
-                      email: "jiaxiong@gmail.com", password: "123123");
-                  Provider.of<AuthCredentials>(context, listen: false)
-                      .createNewCredentials(ac);
-                  Navigator.pushNamed(context, NavBar.id);
+                  loginUser();
                   setState(() {
                     showSpinner = false;
                   });

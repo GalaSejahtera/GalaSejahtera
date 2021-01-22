@@ -1,8 +1,15 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:gala_sejahtera/screens/nav_bar/nav_bar.dart';
 import 'package:gala_sejahtera/widgets/custom_field.dart';
+import 'package:gala_sejahtera/services/rest_api_services.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:provider/provider.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = 'registration_screen';
@@ -12,6 +19,8 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  RestApiServices restApiServices = RestApiServices();
+
   String email;
   String emailErrorMessage = '';
   bool emailError = false;
@@ -88,6 +97,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         passwordErrorMessage = '';
       }
     });
+  }
+
+  void registerUser() async {
+    Response response = await restApiServices.registerUser(
+        username: username, email: email, password: password);
+    // registration success
+    if (response != null) {
+      // call login api to immediately login the user
+      AuthCredentials ac =
+          await restApiServices.userLogin(email: email, password: password);
+      Provider.of<AuthCredentials>(context, listen: false)
+          .createNewCredentials(ac);
+
+      // navigate
+      Navigator.pushNamed(context, NavBar.id);
+      return;
+    }
+
+    SweetAlert.show(
+      context,
+      subtitle: 'Email already exist, please use another email.',
+    );
   }
 
   @override
@@ -176,7 +207,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   setState(() {
                     showSpinner = true;
                   });
-                  Navigator.pushNamed(context, NavBar.id);
+                  registerUser();
                   setState(() {
                     showSpinner = false;
                   });

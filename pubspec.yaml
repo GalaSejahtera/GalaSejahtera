@@ -40,6 +40,11 @@ dependencies:
   # For notification
   rxdart: ^0.25.0
   flutter_local_notifications: ^3.0.3
+  
+  dio: ^3.0.10
+
+  # For alert
+  sweetalert: ^0.0.1
 
 dev_dependencies:
   flutter_test:

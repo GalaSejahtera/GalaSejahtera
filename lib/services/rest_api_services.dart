@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:async';
-
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:gala_sejahtera/services/dioInstance.dart';
 import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:gala_sejahtera/models/covid_cases_records.dart';
 import 'package:gala_sejahtera/models/news_records.dart';
@@ -11,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'ApiEngine.dart';
 
 class RestApiServices {
+  final Dio dioInstance = getDioWithoutAuth();
 
   Future<CovidCasesRecords> fetchCovidCasesRecordsData() async {
     final response =
@@ -62,6 +65,24 @@ class RestApiServices {
     if(!result.containsKey(ApiResponseKey.error)) {
       return AuthCredentials.fromJson(result);
     }
+    print(result);
     // TODO handle the error messages
+  }
+
+  Future<Response> registerUser(
+      {String username, String email, String password}) async {
+    try {
+      final response = await dioInstance.post(CREATE_USER_ACCOUNT, data: {
+        "data": {
+          "role": "user",
+          "name": username,
+          "email": email,
+          "password": password
+        }
+      });
+      return response;
+    } on DioError catch (e) {
+      return null;
+    }
   }
 }

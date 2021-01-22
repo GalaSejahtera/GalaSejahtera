@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import '../../widgets/rounded_button.dart';
+import 'package:provider/provider.dart';
+import 'package:gala_sejahtera/models/auth_credentials.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class ScreeningScreen extends StatefulWidget {
   @override
@@ -11,6 +14,8 @@ class ScreeningScreen extends StatefulWidget {
 class _ScreeningScreenState extends State<ScreeningScreen> {
   @override
   Widget build(BuildContext context) {
+    String token = Provider.of<AuthCredentials>(context).accessToken;
+
     return Scaffold(
       backgroundColor: Color(0xff60A1DD),
       body: Padding(
@@ -38,11 +43,18 @@ class _ScreeningScreenState extends State<ScreeningScreen> {
               height: 16,
             ),
             RoundedButton(
-              title: 'View History',
-              color: Colors.black,
-              onPressed: () =>
-                  Navigator.pushNamed(context, '/AssessmentHistory'),
-            )
+                title: 'View History',
+                color: Colors.black,
+                onPressed: () {
+                  if (token != null) {
+                    Navigator.pushNamed(context, '/AssessmentHistory');
+                  } else {
+                    SweetAlert.show(
+                      context,
+                      subtitle: 'Please login to access the history',
+                    );
+                  }
+                })
           ],
         ),
       ),
