@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../widgets/rounded_button.dart';
 import 'assessment_question.dart';
 
@@ -31,6 +32,8 @@ class _TakeAssessmentScreenState extends State<TakeAssessmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: Text('Take Assessment'),
       ),
       backgroundColor: Color(0xff60A1DD),

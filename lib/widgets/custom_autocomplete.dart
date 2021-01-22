@@ -1,5 +1,5 @@
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:gala_sejahtera/utils/constants.dart';
 
 class CustomAutocomplete extends StatelessWidget {

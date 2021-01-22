@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../widgets/rounded_button.dart';
 
 class AssessmentHistoryScreen extends StatefulWidget {
   @override
@@ -12,6 +11,8 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: Text('Assessment History'),
       ),
       backgroundColor: Color(0xff60A1DD),

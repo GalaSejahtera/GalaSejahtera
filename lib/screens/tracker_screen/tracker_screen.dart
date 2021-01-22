@@ -9,6 +9,7 @@ import 'package:gala_sejahtera/widgets/custom_iconbutton.dart';
 import 'package:gala_sejahtera/widgets/display_box.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gala_sejahtera/widgets/history_component.dart';
+import 'package:gala_sejahtera/utils/notification_helper.dart';
 
 class TrackerScreen extends StatefulWidget {
   @override
@@ -32,6 +33,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
   void initState() {
     super.initState();
     covidCasesRecords = restApiServices.fetchCovidCasesRecordsData();
+    initNotification();
   }
 
   void checkLocationPermission() async {
@@ -94,6 +96,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
             : position.latitude.toString() +
                 ', ' +
                 position.longitude.toString());
+        showNotification("Your Location", position.latitude.toString() + "  " + position.longitude.toString());
       });
 
       return;

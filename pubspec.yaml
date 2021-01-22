@@ -37,6 +37,10 @@ dependencies:
   # For location tracking
   geolocator: ^6.1.13
 
+  # For notification
+  rxdart: ^0.25.0
+  flutter_local_notifications: ^3.0.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -57,8 +61,8 @@ flutter:
   #   - images/a_dot_ham.jpeg
 
   assets:
-    - assets/images/logo-my-sejahtera.png
     - assets/images/malaysia.svg
+    - assets/images/logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
