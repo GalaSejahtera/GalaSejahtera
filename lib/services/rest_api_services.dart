@@ -11,22 +11,6 @@ import 'package:http/http.dart' as http;
 class RestApiServices {
   final Dio dioInstance = getDioWithoutAuth();
 
-  dynamic _returnResponse(http.StreamedResponse response) {
-    switch (response.statusCode) {
-      case 400:
-        throw BadRequestException();
-      case 401:
-      case 409:
-        throw BadRequestException('${response.statusCode}');
-      case 403:
-        throw UnauthorisedException();
-      case 500:
-      default:
-        throw FetchDataException(
-            'Error occured while Communication with Server with StatusCode : ${response.statusCode}');
-    }
-  }
-
   Future<CovidCasesRecords> fetchCovidCasesRecordsData() async {
     final response =
         await http.get('https://knowyourzone.xyz/api/data/covid19/latest');
@@ -34,6 +18,38 @@ class RestApiServices {
       return CovidCasesRecords.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load covid data');
+    }
+  }
+
+  Future<AuthCredentials> userLogin({String email, String password}) async {
+    try {
+      final Response response = await dioInstance.post(USER_LOGIN, data: {
+        'email': email,
+        'password': password,
+      });
+      print("print success");
+      print(response);
+      
+      return AuthCredentials.fromJson(jsonDecode(response.toString()));
+    } on DioError catch (e) {
+      return null;
+    }
+  }
+
+  Future<Response> registerUser(
+      {String username, String email, String password}) async {
+    try {
+      final response = await dioInstance.post(CREATE_USER_ACCOUNT, data: {
+        "data": {
+          "role": "user",
+          "name": username,
+          "email": email,
+          "password": password
+        }
+      });
+      return response;
+    } on DioError catch (e) {
+      return null;
     }
   }
 
@@ -66,39 +82,19 @@ class RestApiServices {
     }
   }
 
-  Future<AuthCredentials> userLogin({String email, String password}) async {
-    final http.Response response = await http.post(
-      '$API_BASE_URL$USER_LOGIN',
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'email': "$email",
-        'password': "$password",
-      }),
-    );
-    if (response.statusCode == 200) {
-      print("print success");
-      return AuthCredentials.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
-
-  Future<Response> registerUser(
-      {String username, String email, String password}) async {
-    try {
-      final response = await dioInstance.post(CREATE_USER_ACCOUNT, data: {
-        "data": {
-          "role": "user",
-          "name": username,
-          "email": email,
-          "password": password
-        }
-      });
-      return response;
-    } on DioError catch (e) {
-      return null;
+  dynamic _returnResponse(http.StreamedResponse response) {
+    switch (response.statusCode) {
+      case 400:
+        throw BadRequestException();
+      case 401:
+      case 409:
+        throw BadRequestException('${response.statusCode}');
+      case 403:
+        throw UnauthorisedException();
+      case 500:
+      default:
+        throw FetchDataException(
+            'Error occured while Communication with Server with StatusCode : ${response.statusCode}');
     }
   }
 }

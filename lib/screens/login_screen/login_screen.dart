@@ -84,6 +84,23 @@ class _LoginScreenState extends State<LoginScreen>
     });
   }
 
+  void loginUser() async {
+    AuthCredentials ac = await restApiServices.userLogin(
+        email: email, password: password);
+    
+    if (ac != null) {
+      // save auth details in state
+      Provider.of<AuthCredentials>(context, listen: false)
+        .createNewCredentials(ac);
+      //navigate
+      Navigator.pushNamed(context, NavBar.id);
+
+      return;
+    }
+
+    print('Login Error');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,11 +163,7 @@ class _LoginScreenState extends State<LoginScreen>
                   setState(() {
                     showSpinner = true;
                   });
-                  AuthCredentials ac = await restApiServices.userLogin(
-                      email: "jiaxiong@gmail.com", password: "123123");
-                  Provider.of<AuthCredentials>(context, listen: false)
-                      .createNewCredentials(ac);
-                  Navigator.pushNamed(context, NavBar.id);
+                  loginUser();
                   setState(() {
                     showSpinner = false;
                   });
