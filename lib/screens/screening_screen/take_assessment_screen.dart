@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../widgets/rounded_button.dart';
+import 'assessment_question.dart';
+
+AssessmentQuestion assessmentQuestion = AssessmentQuestion();
 
 class TakeAssessmentScreen extends StatefulWidget {
   @override
@@ -7,6 +10,23 @@ class TakeAssessmentScreen extends StatefulWidget {
 }
 
 class _TakeAssessmentScreenState extends State<TakeAssessmentScreen> {
+  List<String> answers = [];
+
+  void saveAnswer(String answer) {
+    answers.add(answer);
+    if (assessmentQuestion.isLast()) {
+      Navigator.pushReplacementNamed(context, '/Result', arguments: {
+        'answers': answers,
+      });
+      assessmentQuestion.reset();
+      // answers.clear();
+    } else {
+      setState(() {
+        assessmentQuestion.nextQuestion();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +51,7 @@ class _TakeAssessmentScreenState extends State<TakeAssessmentScreen> {
             ),
             SizedBox(height: 36),
             Text(
-              "Have you experienced shortness of breath?",
+              assessmentQuestion.getQuestion(),
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.white,
@@ -44,16 +64,20 @@ class _TakeAssessmentScreenState extends State<TakeAssessmentScreen> {
             ),
             RoundedButton(
               title: 'Yes',
-              color: Colors.black,
-              onPressed: () => {print("Yes")},
+              color: Colors.green,
+              onPressed: () {
+                saveAnswer("Yes");
+              },
             ),
             SizedBox(
               height: 16,
             ),
             RoundedButton(
               title: 'No',
-              color: Colors.black,
-              onPressed: () => {print("No")},
+              color: Colors.red,
+              onPressed: () {
+                saveAnswer("No");
+              },
             )
           ],
         ),
