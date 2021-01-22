@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gala_sejahtera/services/rest_api_services.dart';
 // import 'package:gala_sejahtera/screens/news_screen/news_details_screen.dart';
 
 class NewsModelChoice {
@@ -17,12 +18,19 @@ class NewsLayoutScreen extends StatefulWidget {
 }
 
 class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
+  RestApiServices restApiServices = RestApiServices();
   final TextEditingController _filter = new TextEditingController();
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text('Search News');
   List filteredNames = new List(); // names filtered by search text
   List names = new List();
   String _searchText = "";
+
+  @override
+  void initState() {
+     super.initState();
+     restApiServices.fetchNewsRecords();
+  }
 
   List newsModelChoice = const [
     const NewsModelChoice(

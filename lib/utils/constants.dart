@@ -12,6 +12,11 @@ var kTextFieldDecoration = InputDecoration(
   disabledBorder: InputBorder.none,
 );
 
+class ApiResponseKey {
+  static String error = "error";
+  static String data = "data";
+}
+
 const String API_BASE_URL = "http://galasejahtera.duckdns.org/";
 
 const String GET_COVID_NEWS = "v1/covids";
