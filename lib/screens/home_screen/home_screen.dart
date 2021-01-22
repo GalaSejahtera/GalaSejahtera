@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:gala_sejahtera/screens/login_screen/login_screen.dart';
-import 'package:gala_sejahtera/screens/second/second_screen.dart';
 import 'package:gala_sejahtera/widgets/custom_autocomplete.dart';
 import 'package:gala_sejahtera/widgets/display_box.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String id = 'home_screen';
@@ -68,6 +69,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 hintText: 'Search for district',
                 suggestions: ["Kuala Lumpur", "Selangor", "Johor"]),
           ),
+          Text(
+            //example to get the state from Provider
+            'ACCESS TOKEN: ${Provider.of<AuthCredentials>(context).accessToken}',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 9.0,
+            ),
+          ),
           Expanded(
             child: Align(
               alignment: FractionalOffset.bottomCenter,
@@ -79,13 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-          ),
-          RaisedButton(
-            child: Text('Testing'),
-            onPressed: () async {
-              Navigator.pushNamed(context, SecondScreen.id);
-            },
-          ),
+          )
         ],
       ),
     );

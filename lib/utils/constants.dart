@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-const API_BASE_URL = "http://galasejahtera.duckdns.org/";
 
 /// Text field styling. Check register/login screen
 var kTextFieldDecoration = InputDecoration(
@@ -13,7 +12,8 @@ var kTextFieldDecoration = InputDecoration(
   disabledBorder: InputBorder.none,
 );
 
-class ApiEndpoints {
-  static const GET_COVID_NEWS = "v1/covids";
-  static const CREATE_USER_ACCOUNT = "v1/users/0";
-}
+const String API_BASE_URL = "http://galasejahtera.duckdns.org/";
+
+const String GET_COVID_NEWS = "v1/covids";
+const String CREATE_USER_ACCOUNT = "v1/users/0";
+const String USER_LOGIN = "v1/login";
