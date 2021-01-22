@@ -9,6 +9,7 @@ import 'package:gala_sejahtera/services/rest_api_services.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = 'registration_screen';
@@ -114,7 +115,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       return;
     }
 
-    print('Registration Error');
+    SweetAlert.show(
+      context,
+      subtitle: 'Email already exist, please use another email.',
+    );
   }
 
   @override

@@ -7,6 +7,7 @@ import 'package:gala_sejahtera/widgets/custom_field.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login_screen';
@@ -98,7 +99,10 @@ class _LoginScreenState extends State<LoginScreen>
       return;
     }
 
-    print('Login Error');
+    SweetAlert.show(
+      context,
+      subtitle: 'Invalid Email or Password.',
+    );
   }
 
   @override
