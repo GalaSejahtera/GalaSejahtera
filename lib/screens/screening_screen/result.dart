@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../widgets/rounded_button.dart';
 import 'assessment_question.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 AssessmentQuestion assessmentQuestion = AssessmentQuestion();
 
 class ResultScreen extends StatelessWidget {
   List<String> questions = assessmentQuestion.getAllQuestion();
-  ScrollController _scrollController = ScrollController();
+
   Map data = {};
   List<String> answers = [];
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +17,8 @@ class ResultScreen extends StatelessWidget {
     answers = data['answers'];
 
     bool hasSymptom() {
-      List<String> first = answers.sublist(0, 4);
-      List<String> last = answers.sublist(4, 11);
+      List<String> first = answers.sublist(0, 4); //Q1 ~ Q4
+      List<String> last = answers.sublist(4, 11); //Q5 ~ Q11
       if (first.where((element) => element == 'Yes').length >= 2)
         return true;
       else if (last.where((element) => element == 'Yes').length >= 2)

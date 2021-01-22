@@ -13,14 +13,18 @@ class TakeAssessmentScreen extends StatefulWidget {
 class _TakeAssessmentScreenState extends State<TakeAssessmentScreen> {
   List<String> answers = [];
 
+  @override
+  void dispose() {
+    super.dispose();
+    assessmentQuestion.reset();
+  }
+
   void saveAnswer(String answer) {
     answers.add(answer);
     if (assessmentQuestion.isLast()) {
       Navigator.pushReplacementNamed(context, '/Result', arguments: {
         'answers': answers,
       });
-      assessmentQuestion.reset();
-      // answers.clear();
     } else {
       setState(() {
         assessmentQuestion.nextQuestion();
