@@ -1,9 +1,7 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:gala_sejahtera/screens/nav_bar/nav_bar.dart';
+import 'package:gala_sejahtera/utils/constants.dart';
 import 'package:gala_sejahtera/widgets/custom_field.dart';
 import 'package:gala_sejahtera/services/rest_api_services.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
@@ -100,15 +98,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void registerUser() async {
-    Response response = await restApiServices.registerUser(
-        username: username, email: email, password: password);
+    Map response =
+        await restApiServices.createUserAccount(username, email, password);
     // registration success
-    if (response != null) {
+    if (!response.containsKey(ApiResponseKey.error)) {
       // call login api to immediately login the user
-      AuthCredentials ac =
+      Map userDetails =
           await restApiServices.userLogin(email: email, password: password);
       Provider.of<AuthCredentials>(context, listen: false)
-          .createNewCredentials(ac);
+          .createNewCredentials(AuthCredentials.fromJson(userDetails));
 
       // navigate
       Navigator.pushNamed(context, NavBar.id);
@@ -117,7 +115,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     SweetAlert.show(
       context,
-      subtitle: 'Email already exist, please use another email.',
+      subtitle: response['error']
     );
   }
 

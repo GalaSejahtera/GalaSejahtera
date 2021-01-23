@@ -3,6 +3,7 @@ import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:gala_sejahtera/screens/nav_bar/nav_bar.dart';
 import 'package:gala_sejahtera/screens/registration_screen/registration_screen.dart';
 import 'package:gala_sejahtera/services/rest_api_services.dart';
+import 'package:gala_sejahtera/utils/constants.dart';
 import 'package:gala_sejahtera/widgets/custom_field.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -86,13 +87,13 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void loginUser() async {
-    AuthCredentials ac = await restApiServices.userLogin(
+    Map userDetails = await restApiServices.userLogin(
         email: email, password: password);
     
-    if (ac != null) {
+    if (!userDetails.containsKey(ApiResponseKey.error)) {
       // save auth details in state
       Provider.of<AuthCredentials>(context, listen: false)
-        .createNewCredentials(ac);
+        .createNewCredentials(AuthCredentials.fromJson(userDetails));
       //navigate
       Navigator.pushNamed(context, NavBar.id);
 

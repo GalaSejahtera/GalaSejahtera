@@ -1,88 +1,56 @@
 import 'dart:convert';
 import 'dart:async';
-import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:gala_sejahtera/services/dioInstance.dart';
-import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:gala_sejahtera/models/covid_cases_records.dart';
 import 'package:gala_sejahtera/models/news_records.dart';
 import 'package:gala_sejahtera/utils/constants.dart';
 import 'package:http/http.dart' as http;
-
 import 'ApiEngine.dart';
 
 class RestApiServices {
-  final Dio dioInstance = getDioWithoutAuth();
 
   Future<CovidCasesRecords> fetchCovidCasesRecordsData() async {
     final response =
-    await http.get('https://knowyourzone.xyz/api/data/covid19/latest');
+        await http.get('https://knowyourzone.xyz/api/data/covid19/latest');
     if (response.statusCode == 200) {
       return CovidCasesRecords.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load covid data');
     }
   }
-  
+
   Future<NewsRecords> fetchNewsRecords() async {
     String url = '$API_BASE_URL$GET_COVID_NEWS';
 
     ApiEngine apiEngine = new ApiEngine();
     var result = await apiEngine.get(url);
-    if(!result.containsKey(ApiResponseKey.error)) {
-      return NewsRecords.fromJson(result);
-    }
-    // TODO handle the error messages
+
+    return NewsRecords.fromJson(result);
   }
 
-  Future<dynamic> createUserAccount() async {
+  Future<Map> createUserAccount(
+      String username, String email, String password) async {
     String url = '$API_BASE_URL$CREATE_USER_ACCOUNT';
     Map input = {
-        "data": {
-          "email": "lewis@hotmails.com",
-          "role": "user",
-          "name": "Lewis",
-          "password": "123456"
-        }
+      "data": {
+        "email": email,
+        "role": "user",
+        "name": username,
+        "password": password
+      }
     };
 
     ApiEngine apiEngine = new ApiEngine();
     var result = await apiEngine.post(url, input);
-    if(!result.containsKey(ApiResponseKey.error)) {
-      // TODO success create account
-      return null;
-    }
-    print(result);
-    // TODO handle the error messages
+
+    return result;
   }
 
-  Future<AuthCredentials> userLogin({String email, String password}) async {
+  Future<Map> userLogin({String email, String password}) async {
     String url = '$API_BASE_URL$USER_LOGIN';
     ApiEngine apiEngine = new ApiEngine();
-    Map input = { 'email': "$email", 'password': "$password"};
+    Map input = {'email': "$email", 'password': "$password"};
     var result = await apiEngine.post(url, input);
-    if(!result.containsKey(ApiResponseKey.error)) {
-      return AuthCredentials.fromJson(result);
-    }
-    print(result);
-    // TODO handle the error messages
-  }
-
-  Future<Response> registerUser(
-      {String username, String email, String password}) async {
-    try {
-      final response = await dioInstance.post(CREATE_USER_ACCOUNT, data: {
-        "data": {
-          "role": "user",
-          "name": username,
-          "email": email,
-          "password": password
-        }
-      });
-      return response;
-    } on DioError catch (e) {
-      return null;
-    }
+    return result;
   }
 }
