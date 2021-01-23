@@ -18,13 +18,16 @@ class NewsModel {
   final String image_feat_single;
   final String summary;
   final String date_pub2;
+  final String newsUrl;
 
   NewsModel({this.title, this.id, this.image_feat_single,
-    this.summary, this.date_pub2});
+    this.summary, this.date_pub2, this.newsUrl});
 
   factory NewsModel.fromJson(Map<String, dynamic> json) {
     return NewsModel(
         title: json['title'], image_feat_single: json['image_feat_single'],
-        summary: json['summary'], id: json['id'], date_pub2: json['date_pub2']);
+        summary: json['summary'], id: json['id'], date_pub2: json['date_pub2'],
+        newsUrl : json['newsUrl'],
+    );
   }
 }

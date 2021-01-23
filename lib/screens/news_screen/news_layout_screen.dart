@@ -4,14 +4,16 @@ import 'package:gala_sejahtera/services/rest_api_services.dart';
 // import 'package:gala_sejahtera/screens/news_screen/news_details_screen.dart';
 import 'package:jiffy/jiffy.dart';
 
+import 'news_details_screen.dart';
+
 class NewsModelChoice {
   final String title;
   final String date;
   final String description;
   final String imglink;
+  final String newsUrl;
 
-  const NewsModelChoice(
-      {this.title, this.date, this.description, this.imglink});
+  const NewsModelChoice({this.title, this.date, this.description, this.imglink, this.newsUrl});
 }
 
 class NewsLayoutScreen extends StatefulWidget {
@@ -94,7 +96,8 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
               title: data.newsModel[index].title,
               date: newsDate,
               description: data.newsModel[index].summary,
-              imglink: data.newsModel[index].image_feat_single
+              imglink: data.newsModel[index].image_feat_single,
+              newsUrl: data.newsModel[index].newsUrl,
           );
           return Center(
             child: NewsChoiceCard(
@@ -234,121 +237,121 @@ class NewsChoiceCard extends StatelessWidget {
   }
 }
 
-class NewsDetailScreen extends StatelessWidget {
-  final NewsModelChoice newsDetailChoice;
-  NewsDetailScreen({this.newsDetailChoice});
-  final Color gradientStart = Colors.transparent;
-  final Color gradientEnd = Colors.black;
-
-  Widget _buildImageContainer(String imgLink, String newsTitle) {
-    return Stack(children: <Widget>[
-      ShaderMask(
-        shaderCallback: (rect) {
-          return LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: <Color>[
-              Colors.black.withAlpha(0),
-              Colors.black12,
-              Colors.black87
-            ],
-          ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-        },
-        blendMode: BlendMode.darken,
-        child: Image.network(
-          imgLink,
-          // height: ,
-          fit: BoxFit.contain,
-        ),
-      ),
-      // Container(
-      //   height: 300,
-      //   decoration: BoxDecoration(
-      //     image: DecorationImage(
-      //         colorFilter: new ColorFilter.mode(
-      //             Colors.black.withOpacity(0.7), BlendMode.dstATop),
-      //         image: NetworkImage(imgLink),
-      //         fit: BoxFit.fitHeight),
-      //   ),
-      // ),
-      Positioned(
-        bottom: 15,
-        right: 15,
-        child: Icon(
-          Icons.share,
-          color: Colors.white.withOpacity(0.7),
-        ),
-      ),
-      Positioned(
-        bottom: 15,
-        left: 15,
-        child: Text(
-          newsTitle,
-          style: TextStyle(fontSize: 16, color: Colors.white),
-        ),
-      ),
-    ]);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(newsDetailChoice.title),
-      ),
-      backgroundColor: Color(0xff60A1DD),
-      body: Padding(
-          padding: EdgeInsets.all(0),
-          child: Container(
-            child: Column(children: [
-              Column(
-                children: <Widget>[
-                  // Text("${newsDetailChoice.title}"),
-                  // Center(
-                  //   child: RaisedButton(
-                  //     onPressed: () {
-                  //       Navigator.pop(context);
-                  //     },
-                  //     child: Text('Go back!'),
-                  //   ),
-                  // ),
-                ],
-              ),
-              Column(
-                children: <Widget>[
-                  Container(
-                    child: _buildImageContainer(
-                        newsDetailChoice.imglink, newsDetailChoice.title),
-                  ),
-                ],
-              ),
-              Column(
-                children: <Widget>[
-                  // Expanded(
-                  //   child: Text(
-                  //     newsDetailChoice.description,
-                  //     style: TextStyle(
-                  //       fontSize: 16.0, // insert your font size here
-                  //     ),
-                  //   ),
-                  // ),
-                  Container(
-                    // height: MediaQuery.of(context).size.height,
-                    color: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        newsDetailChoice.description,
-                        style: TextStyle(
-                          fontSize: 16.0, // insert your font size here
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              )
-            ]),
-          )),
-    );
-  }
-}
+// class NewsDetailScreen extends StatelessWidget {
+//   final NewsModelChoice newsDetailChoice;
+//   NewsDetailScreen({this.newsDetailChoice});
+//   final Color gradientStart = Colors.transparent;
+//   final Color gradientEnd = Colors.black;
+//
+//   Widget _buildImageContainer(String imgLink, String newsTitle) {
+//     return Stack(children: <Widget>[
+//       ShaderMask(
+//         shaderCallback: (rect) {
+//           return LinearGradient(
+//             begin: Alignment.topCenter,
+//             end: Alignment.bottomCenter,
+//             colors: <Color>[
+//               Colors.black.withAlpha(0),
+//               Colors.black12,
+//               Colors.black87
+//             ],
+//           ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+//         },
+//         blendMode: BlendMode.darken,
+//         child: Image.network(
+//           imgLink,
+//           // height: ,
+//           fit: BoxFit.contain,
+//         ),
+//       ),
+//       // Container(
+//       //   height: 300,
+//       //   decoration: BoxDecoration(
+//       //     image: DecorationImage(
+//       //         colorFilter: new ColorFilter.mode(
+//       //             Colors.black.withOpacity(0.7), BlendMode.dstATop),
+//       //         image: NetworkImage(imgLink),
+//       //         fit: BoxFit.fitHeight),
+//       //   ),
+//       // ),
+//       Positioned(
+//         bottom: 15,
+//         right: 15,
+//         child: Icon(
+//           Icons.share,
+//           color: Colors.white.withOpacity(0.7),
+//         ),
+//       ),
+//       Positioned(
+//         bottom: 15,
+//         left: 15,
+//         child: Text(
+//           newsTitle,
+//           style: TextStyle(fontSize: 16, color: Colors.white),
+//         ),
+//       ),
+//     ]);
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(newsDetailChoice.title),
+//       ),
+//       backgroundColor: Color(0xff60A1DD),
+//       body: Padding(
+//           padding: EdgeInsets.all(0),
+//           child: Container(
+//             child: Column(children: [
+//               Column(
+//                 children: <Widget>[
+//                   // Text("${newsDetailChoice.title}"),
+//                   // Center(
+//                   //   child: RaisedButton(
+//                   //     onPressed: () {
+//                   //       Navigator.pop(context);
+//                   //     },
+//                   //     child: Text('Go back!'),
+//                   //   ),
+//                   // ),
+//                 ],
+//               ),
+//               Column(
+//                 children: <Widget>[
+//                   Container(
+//                     child: _buildImageContainer(
+//                         newsDetailChoice.imglink, newsDetailChoice.title),
+//                   ),
+//                 ],
+//               ),
+//               Column(
+//                 children: <Widget>[
+//                   // Expanded(
+//                   //   child: Text(
+//                   //     newsDetailChoice.description,
+//                   //     style: TextStyle(
+//                   //       fontSize: 16.0, // insert your font size here
+//                   //     ),
+//                   //   ),
+//                   // ),
+//                   Container(
+//                     // height: MediaQuery.of(context).size.height,
+//                     color: Colors.white,
+//                     child: Padding(
+//                       padding: EdgeInsets.all(8.0),
+//                       child: Text(
+//                         newsDetailChoice.description,
+//                         style: TextStyle(
+//                           fontSize: 16.0, // insert your font size here
+//                         ),
+//                       ),
+//                     ),
+//                   )
+//                 ],
+//               )
+//             ]),
+//           )),
+//     );
+//   }
+// }
