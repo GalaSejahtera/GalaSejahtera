@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gala_sejahtera/models/daily_cases.dart';
+import 'package:gala_sejahtera/services/rest_api_services.dart';
 
 class CovidBarChart extends StatefulWidget {
   @override
@@ -8,8 +12,63 @@ class CovidBarChart extends StatefulWidget {
 }
 
 class CovidBarChartState extends State<CovidBarChart> {
+  DailyCases cases;
+  RestApiServices restApiServices = RestApiServices();
+  double maxY = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCases();
+  }
+
+  void fetchCases() async {
+    DailyCases dailyCasesRecords = await restApiServices.fetchDailyCases();
+    double tmp = 0;
+    for (var i=0; i<dailyCasesRecords.dailyCases.length; i++) {
+      if(dailyCasesRecords.dailyCases[i].newInfections > tmp) {
+        tmp = dailyCasesRecords.dailyCases[i].newInfections.toDouble();
+      }
+    }
+    setState(() {
+      maxY = tmp;
+      cases = dailyCasesRecords;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (cases == null) {
+      return Column(
+        children: [
+          AspectRatio(
+            aspectRatio: 1.7,
+            child: Card(
+              elevation: 5.0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4)),
+              color: Colors.white.withOpacity(0.7),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Text(
+                    'New Covid-19 Cases in Malaysia',
+                    style: TextStyle(color: Color(0xff60A1DD), fontSize: 20),
+                  ),
+                  SizedBox(
+                    height: 50.0,
+                  ),
+                  Center(child: Text("Loading Data...")),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       children: [
         AspectRatio(
@@ -26,20 +85,17 @@ class CovidBarChartState extends State<CovidBarChart> {
                   height: 10.0,
                 ),
                 Text(
-                  'Covid Cases',
-                  style: TextStyle(
-                      color: Color(0xff60A1DD),
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold),
+                  'New Covid-19 Cases in Malaysia',
+                  style: TextStyle(color: Color(0xff60A1DD), fontSize: 20),
                 ),
                 SizedBox(
-                  height: 10.0,
+                  height: 30.0,
                 ),
                 Flexible(
                   child: BarChart(
                     BarChartData(
                       alignment: BarChartAlignment.spaceBetween,
-                      maxY: 20,
+                      maxY: maxY,
                       barTouchData: BarTouchData(
                         enabled: false,
                         touchTooltipData: BarTouchTooltipData(
@@ -72,24 +128,8 @@ class CovidBarChartState extends State<CovidBarChart> {
                               fontSize: 14),
                           margin: 20,
                           getTitles: (double value) {
-                            switch (value.toInt()) {
-                              case 0:
-                                return 'Mn';
-                              case 1:
-                                return 'Te';
-                              case 2:
-                                return 'Wd';
-                              case 3:
-                                return 'Tu';
-                              case 4:
-                                return 'Fr';
-                              case 5:
-                                return 'St';
-                              case 6:
-                                return 'Sn';
-                              default:
-                                return '';
-                            }
+                            int i = value.toInt();
+                            return cases.dailyCases[i].lastUpdated.substring(5, 10);
                           },
                         ),
                         leftTitles: SideTitles(showTitles: false),
@@ -101,7 +141,7 @@ class CovidBarChartState extends State<CovidBarChart> {
                         BarChartGroupData(
                           x: 0,
                           barRods: [
-                            BarChartRodData(y: 8, colors: [
+                            BarChartRodData(y: cases.dailyCases[0].newInfections.toDouble(), colors: [
                               Colors.lightBlueAccent,
                               Colors.redAccent
                             ])
@@ -111,7 +151,7 @@ class CovidBarChartState extends State<CovidBarChart> {
                         BarChartGroupData(
                           x: 1,
                           barRods: [
-                            BarChartRodData(y: 10, colors: [
+                            BarChartRodData(y: cases.dailyCases[1].newInfections.toDouble(), colors: [
                               Colors.lightBlueAccent,
                               Colors.redAccent
                             ])
@@ -121,7 +161,7 @@ class CovidBarChartState extends State<CovidBarChart> {
                         BarChartGroupData(
                           x: 2,
                           barRods: [
-                            BarChartRodData(y: 14, colors: [
+                            BarChartRodData(y: cases.dailyCases[2].newInfections.toDouble(), colors: [
                               Colors.lightBlueAccent,
                               Colors.redAccent
                             ])
@@ -131,7 +171,7 @@ class CovidBarChartState extends State<CovidBarChart> {
                         BarChartGroupData(
                           x: 3,
                           barRods: [
-                            BarChartRodData(y: 15, colors: [
+                            BarChartRodData(y: cases.dailyCases[3].newInfections.toDouble(), colors: [
                               Colors.lightBlueAccent,
                               Colors.redAccent
                             ])
@@ -139,9 +179,9 @@ class CovidBarChartState extends State<CovidBarChart> {
                           showingTooltipIndicators: [0],
                         ),
                         BarChartGroupData(
-                          x: 3,
+                          x: 4,
                           barRods: [
-                            BarChartRodData(y: 13, colors: [
+                            BarChartRodData(y: cases.dailyCases[4].newInfections.toDouble(), colors: [
                               Colors.lightBlueAccent,
                               Colors.redAccent
                             ])
@@ -149,9 +189,9 @@ class CovidBarChartState extends State<CovidBarChart> {
                           showingTooltipIndicators: [0],
                         ),
                         BarChartGroupData(
-                          x: 3,
+                          x: 5,
                           barRods: [
-                            BarChartRodData(y: 10, colors: [
+                            BarChartRodData(y: cases.dailyCases[5].newInfections.toDouble(), colors: [
                               Colors.lightBlueAccent,
                               Colors.redAccent
                             ])

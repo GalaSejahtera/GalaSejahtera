@@ -22,6 +22,7 @@ const String API_BASE_URL = "http://galasejahtera.duckdns.org/";
 
 const String GET_COVID_NEWS = "v1/covids";
 const String GET_GENERAL_CASES = "v1/kases";
+const String GET_DAILY_CASES = "v1/recentkases";
 const String CREATE_USER_ACCOUNT = "v1/users/0";
 const String USER_LOGIN = "v1/login";
 const String USER_LOGOUT = "v1/logout";

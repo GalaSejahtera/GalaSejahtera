@@ -1,7 +1,9 @@
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/models/auth_credentials.dart';
+import 'package:gala_sejahtera/models/daily_cases.dart';
 import 'package:gala_sejahtera/models/general_cases.dart';
 import 'package:gala_sejahtera/screens/login_screen/login_screen.dart';
 import 'package:gala_sejahtera/services/rest_api_services.dart';
@@ -28,10 +30,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    fetchGeneralCases();
+    fetchCases();
   }
 
-  void fetchGeneralCases() async {
+  void fetchCases() async {
     GeneralCases generalCasesRecords =
         await restApiServices.fetchGeneralCases();
     setState(() {
@@ -82,27 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ]),
           CovidBarChart(),
-          Container(
-            margin: EdgeInsets.all(10),
-            child: CustomAutocomplete(
-                typeAheadController: controller,
-                onChanged: (value) {
-                  setState(() {
-                    selected = value;
-                    controller.text = value;
-                  });
-                },
-                hintText: 'Search for district',
-                suggestions: ["Kuala Lumpur", "Selangor", "Johor"]),
-          ),
-          Text(
-            //example to get the state from Provider
-            'ACCESS TOKEN: ${Provider.of<AuthCredentials>(context).accessToken}',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 9.0,
-            ),
-          ),
           Expanded(
             child: Align(
               alignment: FractionalOffset.bottomCenter,
