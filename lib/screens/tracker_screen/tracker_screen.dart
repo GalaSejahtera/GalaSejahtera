@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gala_sejahtera/widgets/history_component.dart';
 import 'package:gala_sejahtera/utils/notification_helper.dart';
 import 'package:gala_sejahtera/utils/constants.dart';
+import 'package:provider/provider.dart';
 
 class TrackerScreen extends StatefulWidget {
   @override
@@ -38,37 +40,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
     super.initState();
     covidCasesRecords = restApiServices.fetchCovidCasesRecordsData();
     initNotification();
-  }
-
-  void getMyDistrictCases(double latitude, double longitude) async {
-    // get the user district
-    Map myLocation =
-        await restApiServices.reverseGeocoding(latitude, longitude);
-    String myDistrict = myLocation['address']['county'];
-
-    if (myDistrict == null) {
-      myDistrict = myLocation['address']['region'];
-    }
-
-    if (myDistrict == null) {
-      myDistrict = myLocation['address']['city'];
-    }
-
-    // remap
-    for (var district in MALAYSIA_DISTRICTS) {
-      if (myDistrict.contains(district)) {
-        myDistrict = district;
-
-        break;
-      }
-    }
-
-    // get number of cases based on the user district
-    Map response = await restApiServices.getCaseByDistrict(myDistrict);
-    print(response);
-    setState(() {
-      myDistrictCases = response['total'];
-    });
   }
 
   void checkLocationPermission() async {
@@ -120,24 +91,22 @@ class _TrackerScreenState extends State<TrackerScreen> {
     ));
   }
 
-  void countinuousLocationTracking() async {
+  void countinuousLocationTracking(token, userId) async {
     if (trackLocation) {
       // update location every 5 seconds
       locationSubscriber = Geolocator.getPositionStream(
               desiredAccuracy: LocationAccuracy.high,
               intervalDuration: new Duration(seconds: 60))
           .listen((Position position) async {
-        getMyDistrictCases(position.latitude, position.longitude);
-        print(position == null
-            ? 'Unknown'
-            : position.latitude.toString() +
-                ', ' +
-                position.longitude.toString());
-        showNotification(
-            "Your Location",
-            position.latitude.toString() +
-                "  " +
-                position.longitude.toString());
+        getMyDistrictCases(token, position.latitude, position.longitude);
+        int isSymtomticUser = await getNearbyUser(token, userId, position.latitude, position.longitude);
+
+        if (isSymtomticUser > 0) {
+          showNotification(
+            "Symtomtic User(s) Nearby!",
+            "Watch out! $isSymtomticUser user(s) around you. Please practice social distancing!");
+        }
+        
       });
 
       return;
@@ -149,8 +118,50 @@ class _TrackerScreenState extends State<TrackerScreen> {
     }
   }
 
-  void getCaseByDistrict(district) async {
-    Map response = await restApiServices.getCaseByDistrict(district);
+  // get nearby symtomtic users
+  Future<int> getNearbyUser(
+      String token, String userId, double latitude, double longitude) async {
+    Map nearbyUsers = await restApiServices.getNearbyUsers(
+        token, userId, latitude, longitude);
+
+    return int.parse(nearbyUsers['userNum']);
+  }
+
+  // get the user current location's district and get the number of cases in the user's district
+  void getMyDistrictCases(
+      String token, double latitude, double longitude) async {
+    // get the user district
+    Map myLocation =
+        await restApiServices.reverseGeocoding(latitude, longitude);
+    String myDistrict = myLocation['address']['county'];
+
+    if (myDistrict == null) {
+      myDistrict = myLocation['address']['region'];
+    }
+
+    if (myDistrict == null) {
+      myDistrict = myLocation['address']['city'];
+    }
+
+    // remap
+    for (var district in MALAYSIA_DISTRICTS) {
+      if (myDistrict.contains(district)) {
+        myDistrict = district;
+
+        break;
+      }
+    }
+
+    // get number of cases based on the user district
+    Map response = await restApiServices.getCaseByDistrict(token, myDistrict);
+    setState(() {
+      myDistrictCases = response['total'];
+    });
+  }
+
+  // get the number of cases based on the search district
+  void getCaseByDistrict(token, district) async {
+    Map response = await restApiServices.getCaseByDistrict(token, district);
 
     setState(() {
       districtCaseNumber = response['total'];
@@ -159,6 +170,9 @@ class _TrackerScreenState extends State<TrackerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String token = Provider.of<AuthCredentials>(context).accessToken;
+    String userId = Provider.of<AuthCredentials>(context).id;
+
     return Container(
       alignment: Alignment.topCenter,
       margin: EdgeInsets.only(top: 40),
@@ -191,7 +205,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
                   checkLocationPermission();
                 }
 
-                countinuousLocationTracking();
+                countinuousLocationTracking(token, userId);
               }),
         ),
         Column(
@@ -201,7 +215,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
               child: CustomAutocomplete(
                   typeAheadController: controller,
                   onChanged: (value) {
-                    getCaseByDistrict(value);
+                    getCaseByDistrict(token, value);
                     setState(() {
                       selected = value;
                       controller.text = value;
