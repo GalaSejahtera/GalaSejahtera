@@ -7,6 +7,8 @@ import 'package:gala_sejahtera/widgets/display_box.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
+import 'covid_bar_chart.dart';
+
 class HomeScreen extends StatefulWidget {
   static const String id = 'home_screen';
 
@@ -37,25 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
               description: "Covid-19 Cases in Your District",
             ),
           ]),
-          Container(
-            height: 250,
-            width: double.infinity,
-            margin: EdgeInsets.all(10),
-            child: Material(
-              elevation: 5.0,
-              color: Colors.white.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(30.0),
-              child: Center(
-                child: Text(
-                  'Graph showing here',
-                  style: TextStyle(
-                    color: Color(0xffFD3030).withOpacity(0.7),
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          CovidBarChart(),
           Container(
             margin: EdgeInsets.all(10),
             child: CustomAutocomplete(
