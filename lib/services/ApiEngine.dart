@@ -27,9 +27,15 @@ class ApiEngine {
     }
   }
 
-  Future<Map<String, dynamic>> get(String url, [Map header]) async {
+  Future<Map<String, dynamic>> get(String url, [Map<String, String> queryParams, Map header]) async {
     Map<String, String> defaultHeader = {'Content-Type': 'application/json'};
     header = header ?? defaultHeader;
+
+    if(queryParams != null) {
+      String queryString = Uri(queryParameters: queryParams).query;
+      url += '?$queryString';
+    }
+
     try {
       HttpClientRequest request = await client.getUrl(Uri.parse(url));
       header.forEach((k, v) => request.headers.add(k, v));

@@ -25,11 +25,13 @@ class RestApiServices {
     }
   }
 
-  Future<NewsRecords> fetchNewsRecords() async {
+  Future<NewsRecords> fetchNewsRecords([String start, String end]) async {
     String url = '$API_BASE_URL$GET_COVID_NEWS';
-
+    Map<String, String> queryParams = {
+      'from': start = start ?? '0' , 'to': end = end ?? '10'
+    };
     ApiEngine apiEngine = new ApiEngine();
-    var result = await apiEngine.get(url);
+    var result = await apiEngine.get(url, queryParams);
 
     return NewsRecords.fromJson(result);
   }
