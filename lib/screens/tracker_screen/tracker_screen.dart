@@ -10,6 +10,7 @@ import 'package:gala_sejahtera/widgets/display_box.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gala_sejahtera/widgets/history_component.dart';
 import 'package:gala_sejahtera/utils/notification_helper.dart';
+import 'package:gala_sejahtera/utils/constants.dart';
 
 class TrackerScreen extends StatefulWidget {
   @override
@@ -24,6 +25,8 @@ class _TrackerScreenState extends State<TrackerScreen> {
 
   Future<CovidCasesRecords> covidCasesRecords;
   String selected = "";
+  String districtCaseNumber = "";
+  List<String> districtList = MALAYSIA_DISTRICTS;
 
   LocationPermission permission;
   bool isLocationServiceEnabled;
@@ -88,24 +91,37 @@ class _TrackerScreenState extends State<TrackerScreen> {
   void countinuousLocationTracking() async {
     if (trackLocation) {
       // update location every 5 seconds
-      locationSubscriber =
-          Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.high, intervalDuration: new Duration(seconds: 5))
-              .listen((Position position) {
+      locationSubscriber = Geolocator.getPositionStream(
+              desiredAccuracy: LocationAccuracy.high,
+              intervalDuration: new Duration(seconds: 5))
+          .listen((Position position) {
         print(position == null
             ? 'Unknown'
             : position.latitude.toString() +
                 ', ' +
                 position.longitude.toString());
-        showNotification("Your Location", position.latitude.toString() + "  " + position.longitude.toString());
+        showNotification(
+            "Your Location",
+            position.latitude.toString() +
+                "  " +
+                position.longitude.toString());
       });
 
       return;
-    } 
-    
+    }
+
     if (locationSubscriber != null) {
       locationSubscriber.cancel();
       locationSubscriber = null;
     }
+  }
+
+  Future<String> getCaseByDistrict(district) async {
+    Map response = await restApiServices.getCaseByDistrict(district);
+
+    setState(() {
+      districtCaseNumber = response['total'];
+    });
   }
 
   @override
@@ -165,13 +181,14 @@ class _TrackerScreenState extends State<TrackerScreen> {
               child: CustomAutocomplete(
                   typeAheadController: controller,
                   onChanged: (value) {
+                    getCaseByDistrict(value);
                     setState(() {
                       selected = value;
                       controller.text = value;
                     });
                   },
                   hintText: 'Search for district',
-                  suggestions: ["Kuala Lumpur", "Selangor", "Johor"]),
+                  suggestions: districtList),
             ),
             if (!showHistory)
               Row(children: <Widget>[
@@ -195,7 +212,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
             if (selected != "")
               Row(children: <Widget>[
                 DisplayBox(
-                  title: '10',
+                  title: districtCaseNumber,
                   description: 'Covid-19 Cases in $selected',
                   hasClose: true,
                   onClose: () {

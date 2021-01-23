@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:async';
-import 'package:dio/dio.dart';
 import 'package:gala_sejahtera/models/covid_cases_records.dart';
 import 'package:gala_sejahtera/models/news_records.dart';
 import 'package:gala_sejahtera/utils/constants.dart';
@@ -51,6 +50,16 @@ class RestApiServices {
     ApiEngine apiEngine = new ApiEngine();
     Map input = {'email': "$email", 'password': "$password"};
     var result = await apiEngine.post(url, input);
+    
     return result;
+  }
+
+  Future<Map> getCaseByDistrict(String district) async {
+    String url = '$API_BASE_URL$GET_CASE_BY_DISTRICT$district';
+    print(url);
+    ApiEngine apiEngine = new ApiEngine();
+    var result = await apiEngine.get(url);
+    
+    return result['data'];
   }
 }
