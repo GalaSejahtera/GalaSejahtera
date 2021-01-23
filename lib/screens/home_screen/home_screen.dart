@@ -1,13 +1,11 @@
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/models/auth_credentials.dart';
-import 'package:gala_sejahtera/models/daily_cases.dart';
 import 'package:gala_sejahtera/models/general_cases.dart';
 import 'package:gala_sejahtera/screens/login_screen/login_screen.dart';
 import 'package:gala_sejahtera/services/rest_api_services.dart';
-import 'package:gala_sejahtera/widgets/custom_autocomplete.dart';
+import 'package:gala_sejahtera/utils/constants.dart';
 import 'package:gala_sejahtera/widgets/display_box.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
@@ -42,6 +40,14 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  userLogout(String accessToken) async {
+    Map result = await restApiServices.userLogout(accessToken: accessToken);
+    if (!result.containsKey(ApiResponseKey.error)) {
+      Provider.of<AuthCredentials>(context, listen: false).setDefault();
+      Navigator.pushNamed(context, LoginScreen.id);
+    }
+  }
+
   Widget generateButton() {
     String accessToken = Provider.of<AuthCredentials>(context).accessToken;
     if (accessToken == null) {
@@ -56,11 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
       return RoundedButton(
         title: 'Logout',
         color: Colors.redAccent,
-        onPressed: () async {
-          //logout method
-          await restApiServices.userLogout(accessToken: accessToken);
-          Provider.of<AuthCredentials>(context, listen: false).setDefault();
-          Navigator.pushNamed(context, LoginScreen.id);
+        onPressed: () {
+          userLogout(accessToken);
         },
       );
   }

@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:gala_sejahtera/screens/home_screen/home_screen.dart';
 import 'package:gala_sejahtera/screens/news_screen/news_navigator.dart';
 import 'package:gala_sejahtera/screens/screening_screen/screening_navigator.dart';
 import 'package:gala_sejahtera/screens/tracker_screen/tracker_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class NavBar extends StatefulWidget {
   static const String id = 'nav_bar';
@@ -24,8 +27,24 @@ class _NavBarState extends State<NavBar> {
 
   void _onItemTapped(int index) {
     setState(() {
+      if (!isUserLogin()) {
+        if (index == 1 || index == 3) {
+          SweetAlert.show(
+            context,
+            subtitle: 'Login for more features.',
+          );
+          return;
+        }
+      }
       _selectedIndex = index;
     });
+  }
+
+  bool isUserLogin() {
+    String accessToken =
+        Provider.of<AuthCredentials>(context, listen: false).accessToken;
+    if (accessToken == null) return false;
+    return true;
   }
 
   @override
@@ -57,7 +76,7 @@ class _NavBarState extends State<NavBar> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Color(0xff60A1DD),
         onTap: _onItemTapped,
       ),
     );
