@@ -1,12 +1,12 @@
-import 'dart:convert';
 import 'dart:async';
-import 'dart:developer';
-import 'package:dio/dio.dart';
+import 'dart:convert';
+
 import 'package:gala_sejahtera/models/covid_cases_records.dart';
 import 'package:gala_sejahtera/models/general_cases.dart';
 import 'package:gala_sejahtera/models/news_records.dart';
 import 'package:gala_sejahtera/utils/constants.dart';
 import 'package:http/http.dart' as http;
+
 import 'ApiEngine.dart';
 
 class RestApiServices {
@@ -72,5 +72,16 @@ class RestApiServices {
     var result = await apiEngine.get(url);
 
     return result['data'];
+  }
+
+  Future<Map> userLogout({String accessToken}) async {
+    String url = '$API_BASE_URL$USER_LOGOUT';
+    ApiEngine apiEngine = new ApiEngine();
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken'
+    };
+    var result = await apiEngine.post(url, null, requestHeaders);
+    return result;
   }
 }

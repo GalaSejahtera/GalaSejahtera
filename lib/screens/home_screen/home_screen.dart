@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +38,29 @@ class _HomeScreenState extends State<HomeScreen> {
       totalConfirmed = generalCasesRecords.totalConfirmed;
       totalActive = generalCasesRecords.activeCases;
     });
+  }
+
+  Widget generateButton() {
+    String accessToken = Provider.of<AuthCredentials>(context).accessToken;
+    if (accessToken == null) {
+      return RoundedButton(
+        title: 'Login For More Features',
+        color: Colors.black,
+        onPressed: () {
+          Navigator.pushNamed(context, LoginScreen.id);
+        },
+      );
+    } else
+      return RoundedButton(
+        title: 'Logout',
+        color: Colors.redAccent,
+        onPressed: () async {
+          //logout method
+          await restApiServices.userLogout(accessToken: accessToken);
+          Provider.of<AuthCredentials>(context, listen: false).setDefault();
+          Navigator.pushNamed(context, LoginScreen.id);
+        },
+      );
   }
 
   @override
@@ -84,13 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: Align(
               alignment: FractionalOffset.bottomCenter,
-              child: RoundedButton(
-                title: 'Login For More Features',
-                color: Colors.black,
-                onPressed: () {
-                  Navigator.pushNamed(context, LoginScreen.id);
-                },
-              ),
+              child: generateButton(),
             ),
           )
         ],

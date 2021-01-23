@@ -32,6 +32,15 @@ class AuthCredentials extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setDefault() {
+    accessToken = null;
+    refreshToken = null;
+    displayName = null;
+    role = null;
+    id = null;
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     print('AuthCredentials disposed');
