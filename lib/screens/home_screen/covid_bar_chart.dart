@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
@@ -90,7 +89,7 @@ class CovidBarChartState extends State<CovidBarChart> {
                   style: TextStyle(color: Color(0xff60A1DD), fontSize: 20),
                 ),
                 SizedBox(
-                  height: 30.0,
+                  height: 50.0,
                 ),
                 Flexible(
                   child: BarChart(
