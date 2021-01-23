@@ -25,15 +25,16 @@ class CovidBarChartState extends State<CovidBarChart> {
   void fetchCases() async {
     DailyCases dailyCasesRecords = await restApiServices.fetchDailyCases();
     double tmp = 0;
-    for (var i=0; i<dailyCasesRecords.dailyCases.length; i++) {
-      if(dailyCasesRecords.dailyCases[i].newInfections > tmp) {
+    for (var i = 0; i < dailyCasesRecords.dailyCases.length; i++) {
+      if (dailyCasesRecords.dailyCases[i].newInfections > tmp) {
         tmp = dailyCasesRecords.dailyCases[i].newInfections.toDouble();
       }
     }
-    setState(() {
-      maxY = tmp;
-      cases = dailyCasesRecords;
-    });
+    if (mounted)
+      setState(() {
+        maxY = tmp;
+        cases = dailyCasesRecords;
+      });
   }
 
   @override
@@ -129,7 +130,8 @@ class CovidBarChartState extends State<CovidBarChart> {
                           margin: 20,
                           getTitles: (double value) {
                             int i = value.toInt();
-                            return cases.dailyCases[i].lastUpdated.substring(5, 10);
+                            return cases.dailyCases[i].lastUpdated
+                                .substring(5, 10);
                           },
                         ),
                         leftTitles: SideTitles(showTitles: false),
@@ -139,62 +141,74 @@ class CovidBarChartState extends State<CovidBarChart> {
                       ),
                       barGroups: [
                         BarChartGroupData(
-                          x: 0,
-                          barRods: [
-                            BarChartRodData(y: cases.dailyCases[0].newInfections.toDouble(), colors: [
-                              Colors.lightBlueAccent,
-                              Colors.redAccent
-                            ])
-                          ],
-                          showingTooltipIndicators: [0],
-                        ),
-                        BarChartGroupData(
                           x: 1,
                           barRods: [
-                            BarChartRodData(y: cases.dailyCases[1].newInfections.toDouble(), colors: [
-                              Colors.lightBlueAccent,
-                              Colors.redAccent
-                            ])
+                            BarChartRodData(
+                                y: cases.dailyCases[1].newInfections.toDouble(),
+                                colors: [
+                                  Colors.lightBlueAccent,
+                                  Colors.redAccent
+                                ])
                           ],
                           showingTooltipIndicators: [0],
                         ),
                         BarChartGroupData(
                           x: 2,
                           barRods: [
-                            BarChartRodData(y: cases.dailyCases[2].newInfections.toDouble(), colors: [
-                              Colors.lightBlueAccent,
-                              Colors.redAccent
-                            ])
+                            BarChartRodData(
+                                y: cases.dailyCases[2].newInfections.toDouble(),
+                                colors: [
+                                  Colors.lightBlueAccent,
+                                  Colors.redAccent
+                                ])
                           ],
                           showingTooltipIndicators: [0],
                         ),
                         BarChartGroupData(
                           x: 3,
                           barRods: [
-                            BarChartRodData(y: cases.dailyCases[3].newInfections.toDouble(), colors: [
-                              Colors.lightBlueAccent,
-                              Colors.redAccent
-                            ])
+                            BarChartRodData(
+                                y: cases.dailyCases[3].newInfections.toDouble(),
+                                colors: [
+                                  Colors.lightBlueAccent,
+                                  Colors.redAccent
+                                ])
                           ],
                           showingTooltipIndicators: [0],
                         ),
                         BarChartGroupData(
                           x: 4,
                           barRods: [
-                            BarChartRodData(y: cases.dailyCases[4].newInfections.toDouble(), colors: [
-                              Colors.lightBlueAccent,
-                              Colors.redAccent
-                            ])
+                            BarChartRodData(
+                                y: cases.dailyCases[4].newInfections.toDouble(),
+                                colors: [
+                                  Colors.lightBlueAccent,
+                                  Colors.redAccent
+                                ])
                           ],
                           showingTooltipIndicators: [0],
                         ),
                         BarChartGroupData(
                           x: 5,
                           barRods: [
-                            BarChartRodData(y: cases.dailyCases[5].newInfections.toDouble(), colors: [
-                              Colors.lightBlueAccent,
-                              Colors.redAccent
-                            ])
+                            BarChartRodData(
+                                y: cases.dailyCases[5].newInfections.toDouble(),
+                                colors: [
+                                  Colors.lightBlueAccent,
+                                  Colors.redAccent
+                                ])
+                          ],
+                          showingTooltipIndicators: [0],
+                        ),
+                        BarChartGroupData(
+                          x: 6,
+                          barRods: [
+                            BarChartRodData(
+                                y: cases.dailyCases[6].newInfections.toDouble(),
+                                colors: [
+                                  Colors.lightBlueAccent,
+                                  Colors.redAccent
+                                ])
                           ],
                           showingTooltipIndicators: [0],
                         ),
