@@ -39,7 +39,7 @@ const List<String> MALAYSIA_DISTRICTS = [
   "Kuala Langat",
   "Kuala Selangor",
   "Sabak Bernam",
-  "Johor Bharu",
+  "Johor Bahru",
   "Muar",
   "Kulai",
   "Batu Pahat",

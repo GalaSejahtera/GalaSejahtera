@@ -46,9 +46,26 @@ class _TrackerScreenState extends State<TrackerScreen> {
         await restApiServices.reverseGeocoding(latitude, longitude);
     String myDistrict = myLocation['address']['county'];
 
+    if (myDistrict == null) {
+      myDistrict = myLocation['address']['region'];
+    }
+
+    if (myDistrict == null) {
+      myDistrict = myLocation['address']['city'];
+    }
+
+    // remap
+    for (var district in MALAYSIA_DISTRICTS) {
+      if (myDistrict.contains(district)) {
+        myDistrict = district;
+
+        break;
+      }
+    }
+
     // get number of cases based on the user district
     Map response = await restApiServices.getCaseByDistrict(myDistrict);
-
+    print(response);
     setState(() {
       myDistrictCases = response['total'];
     });

@@ -11,8 +11,7 @@ import 'ApiEngine.dart';
 
 class RestApiServices {
   Future<Map> reverseGeocoding(double latitude, double longitude) async {
-    final response = await http.get('https://us1.locationiq.com/v1/reverse.php?key=$LOCATION_IQ_TOKEN&lat=$latitude&lon=$longitude&format=json');
-    print(jsonDecode(response.body));
+    final response = await http.get('https://us1.locationiq.com/v1/reverse.php?key=$LOCATION_IQ_TOKEN&lat=$latitude&lon=$longitude&format=json&zoom=18');
     return jsonDecode(response.body);
   }
   
