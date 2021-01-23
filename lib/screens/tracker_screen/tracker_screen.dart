@@ -21,7 +21,6 @@ class TrackerScreen extends StatefulWidget {
 class _TrackerScreenState extends State<TrackerScreen> {
   RestApiServices restApiServices = RestApiServices();
   TextEditingController controller = TextEditingController();
-  bool showHistory = false;
   bool trackLocation = false;
 
   String myDistrictCases = "0";
@@ -96,14 +95,13 @@ class _TrackerScreenState extends State<TrackerScreen> {
               intervalDuration: new Duration(seconds: 60))
           .listen((Position position) async {
         getMyDistrictCases(token, position.latitude, position.longitude);
-        int isSymtomticUser = await getNearbyUser(token, userId, position.latitude, position.longitude);
+        int isSymtomticUser = await getNearbyUser(
+            token, userId, position.latitude, position.longitude);
 
         if (isSymtomticUser > 0) {
-          showNotification(
-            "Symtomtic User(s) Nearby!",
-            "Watch out! $isSymtomticUser user(s) around you. Please practice social distancing!");
+          showNotification("Symtomtic User(s) Nearby!",
+              "Watch out! $isSymtomticUser user(s) around you. Please practice social distancing!");
         }
-        
       });
 
       return;
@@ -221,25 +219,16 @@ class _TrackerScreenState extends State<TrackerScreen> {
                   hintText: 'Search for district',
                   suggestions: districtList),
             ),
-            if (!showHistory)
-              Row(children: <Widget>[
-                DisplayBox(
-                  title: '10',
-                  description: "Nearby Symptomatic Users",
-                ),
-                DisplayBox(
-                  title: myDistrictCases,
-                  description: "Covid-19 Cases in Your District",
-                ),
-              ]),
-            if (showHistory)
-              HistoryComponent(
-                  districts: ["Kuala Lumpur", "Selangor", "Johor"],
-                  onClose: () {
-                    setState(() {
-                      showHistory = false;
-                    });
-                  }),
+            Row(children: <Widget>[
+              DisplayBox(
+                title: '10',
+                description: "Nearby Symptomatic Users",
+              ),
+              DisplayBox(
+                title: myDistrictCases,
+                description: "Covid-19 Cases in Your District",
+              ),
+            ]),
             if (selected != "")
               Row(children: <Widget>[
                 DisplayBox(
