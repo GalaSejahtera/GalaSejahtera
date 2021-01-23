@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen>
   void loginUser() async {
     Map userDetails = await restApiServices.userLogin(
         email: email, password: password);
-    
+
     if (!userDetails.containsKey(ApiResponseKey.error)) {
       // save auth details in state
       Provider.of<AuthCredentials>(context, listen: false)
@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen>
 
     SweetAlert.show(
       context,
-      subtitle: 'Invalid Email or Password.',
+      subtitle: userDetails[ApiResponseKey.message],
     );
   }
 

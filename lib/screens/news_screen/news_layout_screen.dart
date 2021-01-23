@@ -82,7 +82,7 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
           var newsDate = "";
           final newsDatetime = DateTime.fromMillisecondsSinceEpoch(int.parse(data.newsModel[index].date_pub2));
           final currentDatetime = DateTime.now();
-          print(currentDatetime.difference(newsDatetime).inDays);
+
           if(currentDatetime.difference(newsDatetime).inDays < 1) {
             newsDate = Jiffy(newsDatetime).fromNow();
           }

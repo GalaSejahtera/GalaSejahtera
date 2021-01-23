@@ -14,6 +14,7 @@ var kTextFieldDecoration = InputDecoration(
 class ApiResponseKey {
   static String error = "error";
   static String data = "data";
+  static String message = "message";
 }
 
 const String LOCATION_IQ_TOKEN = "pk.b79278b14275ee79cabf81920db4fa59";
