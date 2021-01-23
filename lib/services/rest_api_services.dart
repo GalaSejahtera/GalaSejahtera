@@ -1,13 +1,15 @@
 import 'dart:convert';
 import 'dart:async';
+import 'dart:developer';
+import 'package:dio/dio.dart';
 import 'package:gala_sejahtera/models/covid_cases_records.dart';
+import 'package:gala_sejahtera/models/general_cases.dart';
 import 'package:gala_sejahtera/models/news_records.dart';
 import 'package:gala_sejahtera/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'ApiEngine.dart';
 
 class RestApiServices {
-
   Future<CovidCasesRecords> fetchCovidCasesRecordsData() async {
     final response =
         await http.get('https://knowyourzone.xyz/api/data/covid19/latest');
@@ -25,6 +27,15 @@ class RestApiServices {
     var result = await apiEngine.get(url);
 
     return NewsRecords.fromJson(result);
+  }
+
+  Future<GeneralCases> fetchGeneralCases() async {
+    String url = '$API_BASE_URL$GET_GENERAL_CASES';
+
+    ApiEngine apiEngine = new ApiEngine();
+    var result = await apiEngine.get(url);
+
+    return GeneralCases.fromJson(result);
   }
 
   Future<Map> createUserAccount(
@@ -50,7 +61,7 @@ class RestApiServices {
     ApiEngine apiEngine = new ApiEngine();
     Map input = {'email': "$email", 'password': "$password"};
     var result = await apiEngine.post(url, input);
-    
+
     return result;
   }
 
@@ -59,7 +70,7 @@ class RestApiServices {
     print(url);
     ApiEngine apiEngine = new ApiEngine();
     var result = await apiEngine.get(url);
-    
+
     return result['data'];
   }
 }

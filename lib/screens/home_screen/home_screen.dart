@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/models/auth_credentials.dart';
+import 'package:gala_sejahtera/models/general_cases.dart';
 import 'package:gala_sejahtera/screens/login_screen/login_screen.dart';
+import 'package:gala_sejahtera/services/rest_api_services.dart';
 import 'package:gala_sejahtera/widgets/custom_autocomplete.dart';
 import 'package:gala_sejahtera/widgets/display_box.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
@@ -17,9 +21,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  RestApiServices restApiServices = RestApiServices();
   String selected = "";
-
   TextEditingController controller = TextEditingController();
+  int totalConfirmed = 0, totalActive = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchGeneralCases();
+  }
+
+  void fetchGeneralCases() async {
+    GeneralCases generalCasesRecords =
+        await restApiServices.fetchGeneralCases();
+    setState(() {
+      totalConfirmed = generalCasesRecords.totalConfirmed;
+      totalActive = generalCasesRecords.activeCases;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +51,12 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Row(children: <Widget>[
             DisplayBox(
-              title: '10',
-              description: "Nearby Symptomatic Users",
+              title: totalConfirmed.toString(),
+              description: "Total Cases",
             ),
             DisplayBox(
-              title: '2000',
-              description: "Covid-19 Cases in Your District",
+              title: totalActive.toString(),
+              description: "Active Cases",
             ),
           ]),
           CovidBarChart(),
