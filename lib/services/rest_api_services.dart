@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:gala_sejahtera/models/covid_cases_records.dart';
+import 'package:gala_sejahtera/models/daily_cases.dart';
 import 'package:gala_sejahtera/models/general_cases.dart';
 import 'package:gala_sejahtera/models/news_records.dart';
 import 'package:gala_sejahtera/utils/constants.dart';
@@ -41,6 +42,15 @@ class RestApiServices {
     var result = await apiEngine.get(url);
 
     return GeneralCases.fromJson(result);
+  }
+
+  Future<DailyCases> fetchDailyCases() async {
+    String url = '$API_BASE_URL$GET_DAILY_CASES';
+
+    ApiEngine apiEngine = new ApiEngine();
+    var result = await apiEngine.get(url);
+
+    return DailyCases.fromJson(result);
   }
 
   Future<Map> createUserAccount(
