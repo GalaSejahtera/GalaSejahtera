@@ -173,19 +173,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
         ),
         Positioned(
           bottom: 30,
-          left: 35,
-          child: CustomIconButton(
-              title: "History",
-              icon: Icon(Icons.history),
-              active: showHistory,
-              onPressed: () {
-                setState(() {
-                  showHistory = !showHistory;
-                });
-              }),
-        ),
-        Positioned(
-          bottom: 30,
           right: 35,
           child: CustomIconButton(
               title: "Track Location",
