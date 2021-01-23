@@ -1,18 +1,17 @@
 import 'dart:async';
-import 'package:gala_sejahtera/models/auth_credentials.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gala_sejahtera/models/covid_cases_records.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:gala_sejahtera/services/rest_api_services.dart';
+import 'package:gala_sejahtera/utils/constants.dart';
+import 'package:gala_sejahtera/utils/notification_helper.dart';
 import 'package:gala_sejahtera/widgets/custom_autocomplete.dart';
 import 'package:gala_sejahtera/widgets/custom_iconbutton.dart';
 import 'package:gala_sejahtera/widgets/display_box.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gala_sejahtera/widgets/history_component.dart';
-import 'package:gala_sejahtera/utils/notification_helper.dart';
-import 'package:gala_sejahtera/utils/constants.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 
 class TrackerScreen extends StatefulWidget {
   @override
@@ -25,7 +24,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
   bool showHistory = false;
   bool trackLocation = false;
 
-  Future<CovidCasesRecords> covidCasesRecords;
   String myDistrictCases = "0";
   String selected = "";
   String districtCaseNumber = "";
@@ -38,7 +36,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
   @override
   void initState() {
     super.initState();
-    covidCasesRecords = restApiServices.fetchCovidCasesRecordsData();
     initNotification();
   }
 

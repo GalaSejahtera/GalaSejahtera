@@ -3,7 +3,6 @@ import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:gala_sejahtera/screens/login_screen/login_screen.dart';
 import 'package:gala_sejahtera/screens/nav_bar/nav_bar.dart';
 import 'package:gala_sejahtera/screens/registration_screen/registration_screen.dart';
-import 'package:gala_sejahtera/screens/second/second_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -19,7 +18,6 @@ class GalaSejahtera extends StatelessWidget {
           LoginScreen.id: (context) => LoginScreen(),
           RegistrationScreen.id: (context) => RegistrationScreen(),
           NavBar.id: (context) => NavBar(),
-          SecondScreen.id: (context) => SecondScreen(),
           //other screens
         }));
   }

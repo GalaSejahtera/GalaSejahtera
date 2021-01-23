@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:gala_sejahtera/models/covid_cases_records.dart';
+
 import 'package:gala_sejahtera/models/daily_cases.dart';
 import 'package:gala_sejahtera/models/general_cases.dart';
 import 'package:gala_sejahtera/models/news_records.dart';
@@ -14,16 +14,6 @@ class RestApiServices {
     final response = await http.get(
         'https://us1.locationiq.com/v1/reverse.php?key=$LOCATION_IQ_TOKEN&lat=$latitude&lon=$longitude&format=json&zoom=18');
     return jsonDecode(response.body);
-  }
-
-  Future<CovidCasesRecords> fetchCovidCasesRecordsData() async {
-    final response =
-        await http.get('https://knowyourzone.xyz/api/data/covid19/latest');
-    if (response.statusCode == 200) {
-      return CovidCasesRecords.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load covid data');
-    }
   }
 
   Future<NewsRecords> fetchNewsRecords([String start, String end]) async {
