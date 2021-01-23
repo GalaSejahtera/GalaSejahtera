@@ -16,6 +16,8 @@ class ApiResponseKey {
   static String data = "data";
 }
 
+const String LOCATION_IQ_TOKEN = "pk.b79278b14275ee79cabf81920db4fa59";
+
 const String API_BASE_URL = "http://galasejahtera.duckdns.org/";
 
 const String GET_COVID_NEWS = "v1/covids";

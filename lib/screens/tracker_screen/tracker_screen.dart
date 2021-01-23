@@ -24,6 +24,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
   bool trackLocation = false;
 
   Future<CovidCasesRecords> covidCasesRecords;
+  String myDistrictCases = "0";
   String selected = "";
   String districtCaseNumber = "";
   List<String> districtList = MALAYSIA_DISTRICTS;
@@ -37,6 +38,20 @@ class _TrackerScreenState extends State<TrackerScreen> {
     super.initState();
     covidCasesRecords = restApiServices.fetchCovidCasesRecordsData();
     initNotification();
+  }
+
+  void getMyDistrictCases(double latitude, double longitude) async {
+    // get the user district
+    Map myLocation =
+        await restApiServices.reverseGeocoding(latitude, longitude);
+    String myDistrict = myLocation['address']['county'];
+
+    // get number of cases based on the user district
+    Map response = await restApiServices.getCaseByDistrict(myDistrict);
+
+    setState(() {
+      myDistrictCases = response['total'];
+    });
   }
 
   void checkLocationPermission() async {
@@ -93,8 +108,9 @@ class _TrackerScreenState extends State<TrackerScreen> {
       // update location every 5 seconds
       locationSubscriber = Geolocator.getPositionStream(
               desiredAccuracy: LocationAccuracy.high,
-              intervalDuration: new Duration(seconds: 5))
-          .listen((Position position) {
+              intervalDuration: new Duration(seconds: 60))
+          .listen((Position position) async {
+        getMyDistrictCases(position.latitude, position.longitude);
         print(position == null
             ? 'Unknown'
             : position.latitude.toString() +
@@ -116,7 +132,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
     }
   }
 
-  Future<String> getCaseByDistrict(district) async {
+  void getCaseByDistrict(district) async {
     Map response = await restApiServices.getCaseByDistrict(district);
 
     setState(() {
@@ -197,7 +213,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
                   description: "Nearby Symptomatic Users",
                 ),
                 DisplayBox(
-                  title: '2000',
+                  title: myDistrictCases,
                   description: "Covid-19 Cases in Your District",
                 ),
               ]),

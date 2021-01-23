@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:gala_sejahtera/models/covid_cases_records.dart';
 import 'package:gala_sejahtera/models/general_cases.dart';
 import 'package:gala_sejahtera/models/news_records.dart';
@@ -10,6 +9,12 @@ import 'package:http/http.dart' as http;
 import 'ApiEngine.dart';
 
 class RestApiServices {
+  Future<Map> reverseGeocoding(double latitude, double longitude) async {
+    final response = await http.get('https://us1.locationiq.com/v1/reverse.php?key=$LOCATION_IQ_TOKEN&lat=$latitude&lon=$longitude&format=json');
+    print(jsonDecode(response.body));
+    return jsonDecode(response.body);
+  }
+  
   Future<CovidCasesRecords> fetchCovidCasesRecordsData() async {
     final response =
         await http.get('https://knowyourzone.xyz/api/data/covid19/latest');
