@@ -51,8 +51,7 @@ class ApiEngine {
     }
   }
 
-  Future<Map<String, dynamic>> post(String url, Map inputData,
-      [Map header]) async {
+  Future<Map<String, dynamic>> post(String url, Map inputData, [Map header]) async {
     Map<String, String> defaultHeader = {
       'Content-Type': 'application/json; charset=UTF-8'
     };

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gala_sejahtera/models/news_records.dart';
 import 'package:gala_sejahtera/services/rest_api_services.dart';
 // import 'package:gala_sejahtera/screens/news_screen/news_details_screen.dart';
+import 'package:jiffy/jiffy.dart';
 
 class NewsModelChoice {
   final String title;
@@ -20,6 +22,8 @@ class NewsLayoutScreen extends StatefulWidget {
 class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
   RestApiServices restApiServices = RestApiServices();
   final TextEditingController _filter = new TextEditingController();
+  Future<NewsRecords> newsRecord;
+
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text('Search News');
   List filteredNames = new List(); // names filtered by search text
@@ -29,46 +33,12 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
   @override
   void initState() {
      super.initState();
-     restApiServices.fetchNewsRecords();
+     newsRecord = fetchNewsRecord();
   }
 
-  List newsModelChoice = const [
-    const NewsModelChoice(
-        title: 'MacBook Pro',
-        date: '1 June 2019',
-        description:
-            'MacBook Pro (sometimes abbreviated as MBP) is a line of Macintosh portable computers introduced in January 2006 by Apple Inc.',
-        imglink:
-            'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60'),
-    const NewsModelChoice(
-        title: 'MacBook Air',
-        date: '1 June 2016',
-        description:
-            'MacBook Air is a line of laptop computers developed and manufactured by Apple Inc. It consists of a full-size keyboard, a machined aluminum case, and a thin light structure.',
-        imglink:
-            'https://images.unsplash.com/photo-1499673610122-01c7122c5dcb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60'),
-    const NewsModelChoice(
-        title: 'iMac',
-        date: '1 June 2019',
-        description:
-            'iMac is a family of all-in-one Macintosh desktop computers designed and built by Apple Inc. It has been the primary part of Apple consumer desktop offerings since its debut in August 1998, and has evolved through seven distinct forms.',
-        imglink:
-            'https://images.unsplash.com/photo-1517059224940-d4af9eec41b7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60'),
-    const NewsModelChoice(
-        title: 'Mac Mini',
-        date: '1 June 2017',
-        description:
-            'Mac mini (branded with lowercase "mini") is a desktop computer made by Apple Inc. One of four desktop computers in the current Macintosh lineup, along with the iMac, Mac Pro, and iMac Pro, it uses many components usually featured in laptops to achieve its small size.',
-        imglink:
-            'https://www.apple.com/v/mac-mini/f/images/shared/og_image__4mdtjbfhcduu_large.png?201904170831'),
-    const NewsModelChoice(
-        title: 'Mac Pro',
-        date: '1 June 2018',
-        description:
-            'Mac Pro is a series of workstation and server computer cases designed, manufactured and sold by Apple Inc. since 2006. The Mac Pro, in most configurations and in terms of speed and performance, is the most powerful computer that Apple offers.',
-        imglink:
-            'https://i0.wp.com/9to5mac.com/wp-content/uploads/sites/6/2017/01/mac-pro-2-concept-image.png?resize=1000%2C500&quality=82&strip=all&ssl=1'),
-  ];
+  Future<NewsRecords> fetchNewsRecord() async{
+    return await restApiServices.fetchNewsRecords();
+  }
 
   SearchNewsState() {
     _filter.addListener(() {
@@ -98,26 +68,60 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
       home: Scaffold(
         appBar: _buildNewsBar(context),
         backgroundColor: Color(0xff60A1DD),
-        body: new ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(20.0),
-            children: List.generate(newsModelChoice.length, (index) {
-              return Center(
-                child: NewsChoiceCard(
-                  newsModelChoice: newsModelChoice[index],
-                  item: newsModelChoice[index],
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => NewsDetailScreen(
-                              newsDetailChoice: newsModelChoice[index])),
-                    );
-                  },
-                ),
-              );
-            })),
+        body: Center(
+          child: _newsRecordData(),
+        )
       ),
+    );
+  }
+
+  ListView _newsRecords(data) {
+    return ListView.builder(
+        itemCount: data.newsModel.length,
+        itemBuilder: (context, index) {
+          var newsDate = "";
+          final newsDatetime = DateTime.fromMillisecondsSinceEpoch(int.parse(data.newsModel[index].date_pub2));
+          final currentDatetime = DateTime.now();
+          print(currentDatetime.difference(newsDatetime).inDays);
+          if(currentDatetime.difference(newsDatetime).inDays < 1) {
+            newsDate = Jiffy(newsDatetime).fromNow();
+          }
+          else {
+            newsDate = Jiffy(newsDatetime).yMMMMdjm;
+          }
+
+          var newsModelChoice = NewsModelChoice(
+              title: data.newsModel[index].title,
+              date: newsDate,
+              description: data.newsModel[index].summary,
+              imglink: data.newsModel[index].image_feat_single
+          );
+          return Center(
+            child: NewsChoiceCard(
+              newsModelChoice: newsModelChoice,
+              item: newsModelChoice,
+              onTap: () {
+                Navigator.push(
+                  context, MaterialPageRoute(
+                      builder: (context) => NewsDetailScreen(newsDetailChoice: newsModelChoice)),
+                );
+              },
+            ),
+          );
+        }
+    );
+  }
+
+  FutureBuilder _newsRecordData() {
+    return FutureBuilder<NewsRecords>(
+      future: fetchNewsRecord(),
+      builder: (BuildContext context, AsyncSnapshot<NewsRecords> snapshot){
+        if (snapshot.hasData) {
+          return _newsRecords(snapshot.data);
+        }else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 
@@ -217,7 +221,7 @@ class NewsChoiceCard extends StatelessWidget {
                     children: [
                       Text(newsModelChoice.title,
                           style: Theme.of(context).textTheme.title),
-                      Text(newsModelChoice.date,
+                      Text(newsModelChoice.date.toString(),
                           style:
                               TextStyle(color: Colors.black.withOpacity(0.5))),
                       Text(newsModelChoice.description),

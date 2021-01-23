@@ -47,6 +47,8 @@ dependencies:
   fl_chart: ^0.12.2
   # For alert
   sweetalert: ^0.0.1
+  # jiffy datetime formatting (momentjs)
+  jiffy: ^3.0.1
 
 dev_dependencies:
   flutter_test:

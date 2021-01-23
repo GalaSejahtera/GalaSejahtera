@@ -8,7 +8,6 @@ class NewsRecords {
   factory NewsRecords.fromJson(Map<String, dynamic> json) {
     var newsModelList = json['data'] as List;
     List<NewsModel> newsList = newsModelList.map((i) => NewsModel.fromJson(i)).toList();
-
     return NewsRecords(newsModel: newsList);
   }
 }
