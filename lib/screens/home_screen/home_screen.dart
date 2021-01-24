@@ -63,22 +63,22 @@ class _HomeScreenState extends State<HomeScreen> {
     } else
       return [
         RoundedButton(
+          title: 'Change password',
+          color: Colors.blueAccent,
+          onPressed: () {
+            Navigator.pushNamed(context, UpdatePasswordScreen.id);
+          },
+        ),
+        SizedBox(
+          height: 1.0,
+        ),
+        RoundedButton(
           title: 'Logout',
           color: Colors.redAccent,
           onPressed: () {
             userLogout(accessToken);
           },
         ),
-        SizedBox(
-          height: 24.0,
-        ),
-        RoundedButton(
-          title: 'Change password',
-          color: Colors.blueAccent,
-          onPressed: () {
-            Navigator.pushNamed(context, UpdatePasswordScreen.id);
-          },
-        )
       ];
   }
 
@@ -104,8 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: Align(
               alignment: FractionalOffset.bottomCenter,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: generateButton()),
             ),
           )
