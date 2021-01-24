@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/models/news_records.dart';
 import 'package:gala_sejahtera/services/rest_api_services.dart';
-// import 'package:gala_sejahtera/screens/news_screen/news_details_screen.dart';
 import 'package:jiffy/jiffy.dart';
-
 import 'news_details_screen.dart';
 
 class NewsModelChoice {
@@ -18,13 +16,12 @@ class NewsModelChoice {
 
 class NewsLayoutScreen extends StatefulWidget {
   @override
-  _NewsLayoutScreenState createState() => _NewsLayoutScreenState();
+  _NewsLayoutScreenState createState() => new _NewsLayoutScreenState();
 }
 
 class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
   RestApiServices restApiServices = RestApiServices();
   final TextEditingController _filter = new TextEditingController();
-  Future<NewsRecords> newsRecord;
 
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text('Search News');
@@ -32,17 +29,47 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
   List names = new List();
   String _searchText = "";
 
+  ScrollController _sc = new ScrollController();
+  List newsList = [];
+  static int from = 0;
+  static int to = 9;
+  static int pageIncrement = 10;
+  bool isLoading = false;
+
   @override
   void initState() {
      super.initState();
-     newsRecord = fetchNewsRecord();
+     from = 0;
+     to = 9;
+     isLoading = false;
+     _searchText = "";
+
+     this.fetchNewsRecord(from, to);
+
+     _sc.addListener(() {
+       if(_sc.position.pixels == _sc.position.maxScrollExtent) {
+         fetchNewsRecord(from, to);
+       }
+     });
   }
 
-  Future<NewsRecords> fetchNewsRecord() async{
-    return await restApiServices.fetchNewsRecords();
+  Future<void> fetchNewsRecord(int fromItem, int toItem) async{
+    NewsRecords fetchedNews = new NewsRecords();
+    if (!isLoading) {
+      setState(() {
+        isLoading = true;
+      });
+      fetchedNews = await restApiServices.fetchNewsRecords(fromItem.toString(), toItem.toString());
+    }
+    setState(() {
+      isLoading = false;
+      newsList = [ ...newsList, ...fetchedNews.newsModel.toList()];
+      from = fromItem + pageIncrement;
+      to = toItem + pageIncrement;
+    });
   }
 
-  SearchNewsState() {
+  searchNewsState() {
     _filter.addListener(() {
       if (_filter.text.isEmpty) {
         setState(() {
@@ -57,12 +84,6 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
     });
   }
 
-  // Function to be called on click
-  void _onTileClicked(int index) {
-    setState(() {});
-    debugPrint("You tapped on item $index");
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -71,62 +92,82 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
         appBar: _buildNewsBar(context),
         backgroundColor: Color(0xff60A1DD),
         body: Center(
-          child: _newsRecordData(),
-        )
+          child: _buildNewsList(),
+        ),
+        resizeToAvoidBottomPadding: false,
       ),
     );
   }
 
-  ListView _newsRecords(data) {
-    return ListView.builder(
-        itemCount: data.newsModel.length,
-        itemBuilder: (context, index) {
-          var newsDate = "";
-          final newsDatetime = DateTime.fromMillisecondsSinceEpoch(int.parse(data.newsModel[index].date_pub2));
-          final currentDatetime = DateTime.now();
-
-          if(currentDatetime.difference(newsDatetime).inDays < 1) {
-            newsDate = Jiffy(newsDatetime).fromNow();
-          }
-          else {
-            newsDate = Jiffy(newsDatetime).yMMMMdjm;
-          }
-
-          var newsModelChoice = NewsModelChoice(
-              title: data.newsModel[index].title,
-              date: newsDate,
-              description: data.newsModel[index].summary,
-              imglink: data.newsModel[index].image_feat_single,
-              newsUrl: data.newsModel[index].newsUrl,
-          );
-          return Center(
-            child: NewsChoiceCard(
-              newsModelChoice: newsModelChoice,
-              item: newsModelChoice,
-              onTap: () {
-                Navigator.push(
-                  context, MaterialPageRoute(
-                      builder: (context) => NewsDetailScreen(newsDetailChoice: newsModelChoice)),
-                );
-              },
-            ),
-          );
-        }
+  Widget _buildProgressIndicator() {
+    return new Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: new Center(
+        child: new Opacity(
+          opacity: isLoading ? 1.0 : 00,
+          child: new CircularProgressIndicator(),
+        ),
+      ),
     );
   }
 
-  FutureBuilder _newsRecordData() {
-    return FutureBuilder<NewsRecords>(
-      future: fetchNewsRecord(),
-      builder: (BuildContext context, AsyncSnapshot<NewsRecords> snapshot){
-        if (snapshot.hasData) {
-          return _newsRecords(snapshot.data);
-        }else {
-          return Center(child: CircularProgressIndicator());
-        }
-      },
-    );
+  Widget _buildNewsList(){
+      return ListView.builder(
+          controller: _sc,
+          itemCount: newsList.length,
+          itemBuilder: (BuildContext context, int index) {
+            if (index == newsList.length) {
+              return _buildProgressIndicator();
+            }
+            else {
+              var newsDate = "";
+              final newsDatetime = DateTime.fromMillisecondsSinceEpoch(int.parse(newsList[index].date_pub2));
+              final currentDatetime = DateTime.now();
+
+              if(currentDatetime.difference(newsDatetime).inDays < 1) {
+                newsDate = Jiffy(newsDatetime).fromNow();
+              }
+              else {
+                newsDate = Jiffy(newsDatetime).yMMMMdjm;
+              }
+
+              var newsModelChoice = NewsModelChoice(
+                title: newsList[index].title,
+                date: newsDate,
+                description: newsList[index].summary,
+                imglink: newsList[index].image_feat_single,
+                newsUrl: newsList[index].newsUrl,
+              );
+
+              return Center(
+                child: NewsChoiceCard(
+                  newsModelChoice: newsModelChoice,
+                  item: newsModelChoice,
+                  onTap: () {
+                    Navigator.push(
+                      context, MaterialPageRoute(
+                        builder: (context) => NewsDetailScreen(newsDetailChoice: newsModelChoice)),
+                    );
+                  },
+                ),
+              );
+            }
+          }
+      );
   }
+
+  // FutureBuilder _newsRecordData() {
+  //   return FutureBuilder<NewsRecords>(
+  //     future: fetchNewsRecord(page),
+  //     builder: (BuildContext context, AsyncSnapshot<NewsRecords> snapshot){
+  //       if (snapshot.hasData) {
+  //         return _newsRecords(snapshot.data);
+  //       }else {
+  //         return Center(child: CircularProgressIndicator());
+  //       }
+  //     },
+  //   );
+  // }
 
   void _searchPressed() {
     setState(() {
@@ -178,6 +219,12 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
         onPressed: _searchPressed,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _sc.dispose();
+    super.dispose();
   }
 }
 
@@ -236,122 +283,3 @@ class NewsChoiceCard extends StatelessWidget {
             )));
   }
 }
-
-// class NewsDetailScreen extends StatelessWidget {
-//   final NewsModelChoice newsDetailChoice;
-//   NewsDetailScreen({this.newsDetailChoice});
-//   final Color gradientStart = Colors.transparent;
-//   final Color gradientEnd = Colors.black;
-//
-//   Widget _buildImageContainer(String imgLink, String newsTitle) {
-//     return Stack(children: <Widget>[
-//       ShaderMask(
-//         shaderCallback: (rect) {
-//           return LinearGradient(
-//             begin: Alignment.topCenter,
-//             end: Alignment.bottomCenter,
-//             colors: <Color>[
-//               Colors.black.withAlpha(0),
-//               Colors.black12,
-//               Colors.black87
-//             ],
-//           ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-//         },
-//         blendMode: BlendMode.darken,
-//         child: Image.network(
-//           imgLink,
-//           // height: ,
-//           fit: BoxFit.contain,
-//         ),
-//       ),
-//       // Container(
-//       //   height: 300,
-//       //   decoration: BoxDecoration(
-//       //     image: DecorationImage(
-//       //         colorFilter: new ColorFilter.mode(
-//       //             Colors.black.withOpacity(0.7), BlendMode.dstATop),
-//       //         image: NetworkImage(imgLink),
-//       //         fit: BoxFit.fitHeight),
-//       //   ),
-//       // ),
-//       Positioned(
-//         bottom: 15,
-//         right: 15,
-//         child: Icon(
-//           Icons.share,
-//           color: Colors.white.withOpacity(0.7),
-//         ),
-//       ),
-//       Positioned(
-//         bottom: 15,
-//         left: 15,
-//         child: Text(
-//           newsTitle,
-//           style: TextStyle(fontSize: 16, color: Colors.white),
-//         ),
-//       ),
-//     ]);
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(newsDetailChoice.title),
-//       ),
-//       backgroundColor: Color(0xff60A1DD),
-//       body: Padding(
-//           padding: EdgeInsets.all(0),
-//           child: Container(
-//             child: Column(children: [
-//               Column(
-//                 children: <Widget>[
-//                   // Text("${newsDetailChoice.title}"),
-//                   // Center(
-//                   //   child: RaisedButton(
-//                   //     onPressed: () {
-//                   //       Navigator.pop(context);
-//                   //     },
-//                   //     child: Text('Go back!'),
-//                   //   ),
-//                   // ),
-//                 ],
-//               ),
-//               Column(
-//                 children: <Widget>[
-//                   Container(
-//                     child: _buildImageContainer(
-//                         newsDetailChoice.imglink, newsDetailChoice.title),
-//                   ),
-//                 ],
-//               ),
-//               Column(
-//                 children: <Widget>[
-//                   // Expanded(
-//                   //   child: Text(
-//                   //     newsDetailChoice.description,
-//                   //     style: TextStyle(
-//                   //       fontSize: 16.0, // insert your font size here
-//                   //     ),
-//                   //   ),
-//                   // ),
-//                   Container(
-//                     // height: MediaQuery.of(context).size.height,
-//                     color: Colors.white,
-//                     child: Padding(
-//                       padding: EdgeInsets.all(8.0),
-//                       child: Text(
-//                         newsDetailChoice.description,
-//                         style: TextStyle(
-//                           fontSize: 16.0, // insert your font size here
-//                         ),
-//                       ),
-//                     ),
-//                   )
-//                 ],
-//               )
-//             ]),
-//           )),
-//     );
-//   }
-// }

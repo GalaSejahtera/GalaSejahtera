@@ -18,6 +18,13 @@ class _NewsDetailScreen extends State<NewsDetailScreen> {
   final Completer<WebViewController> _controller = Completer<WebViewController>();
 
   @override
+  void initState() {
+    super.initState();
+    // Enable hybrid composition.
+    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -29,6 +36,7 @@ class _NewsDetailScreen extends State<NewsDetailScreen> {
         return Stack(
             children: <Widget>[
               WebView(
+                userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
                 initialUrl: widget.newsDetailChoice.newsUrl,
                 javascriptMode: JavascriptMode.disabled,
                 navigationDelegate: (NavigationRequest request) {

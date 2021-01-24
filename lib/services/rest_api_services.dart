@@ -16,11 +16,13 @@ class RestApiServices {
     return jsonDecode(response.body);
   }
 
-  Future<NewsRecords> fetchNewsRecords([String start, String end]) async {
+  Future<NewsRecords> fetchNewsRecords([String start, String end, String searchValue]) async {
     String url = '$API_BASE_URL$GET_COVID_NEWS';
     Map<String, String> queryParams = {
       'from': start = start ?? '0',
-      'to': end = end ?? '10'
+      'to': end = end ?? '10',
+      'filterItem': 'q',
+      'filterValue': searchValue = searchValue ?? '',
     };
     ApiEngine apiEngine = new ApiEngine();
     var result = await apiEngine.get(url, queryParams);
