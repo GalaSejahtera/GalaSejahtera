@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:gala_sejahtera/models/news_records.dart';
 import 'package:gala_sejahtera/services/rest_api_services.dart';
 import 'package:jiffy/jiffy.dart';
@@ -22,14 +23,26 @@ class NewsLayoutScreen extends StatefulWidget {
 class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
   RestApiServices restApiServices = RestApiServices();
   final TextEditingController _filter = new TextEditingController();
-
-  Icon _searchIcon = new Icon(Icons.search);
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Widget _appBarTitle = new Text('Search News');
-  List filteredNames = new List(); // names filtered by search text
-  List names = new List();
-  String _searchText = "";
+  Widget _emptyNewsListText = new Text('No Result!',
+      style : TextStyle(
+      color: Colors.grey[800],
+      fontWeight: FontWeight.w900,
+      fontStyle: FontStyle.italic,
+      fontFamily: 'Open Sans',
+      fontSize: 40
+      ));
+  SearchBar searchBar;
+
+  // Icon _searchIcon = new Icon(Icons.search);
+
+  // List filteredNames = new List(); // names filtered by search text
+  // List names = new List();
+  // String _searchText = "";
 
   ScrollController _sc = new ScrollController();
+  String searchText = "";
   List newsList = [];
   static int from = 0;
   static int to = 9;
@@ -42,25 +55,29 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
      from = 0;
      to = 9;
      isLoading = false;
-     _searchText = "";
+     searchText = "";
 
-     this.fetchNewsRecord(from, to);
+     this.fetchNewsRecord(from, to, searchText);
 
      _sc.addListener(() {
        if(_sc.position.pixels == _sc.position.maxScrollExtent) {
-         fetchNewsRecord(from, to);
+         print(searchText);
+         print(from);
+         print(to);
+         fetchNewsRecord(from, to, searchText);
        }
      });
   }
 
-  Future<void> fetchNewsRecord(int fromItem, int toItem) async{
+  Future<void> fetchNewsRecord(int fromItem, int toItem, [String searchValue]) async{
     NewsRecords fetchedNews = new NewsRecords();
     if (!isLoading) {
       setState(() {
         isLoading = true;
       });
-      fetchedNews = await restApiServices.fetchNewsRecords(fromItem.toString(), toItem.toString());
+      fetchedNews = await restApiServices.fetchNewsRecords(fromItem.toString(), toItem.toString(), searchValue);
     }
+
     setState(() {
       isLoading = false;
       newsList = [ ...newsList, ...fetchedNews.newsModel.toList()];
@@ -69,27 +86,13 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
     });
   }
 
-  searchNewsState() {
-    _filter.addListener(() {
-      if (_filter.text.isEmpty) {
-        setState(() {
-          _searchText = "";
-          filteredNames = names;
-        });
-      } else {
-        setState(() {
-          _searchText = _filter.text;
-        });
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "test",
       home: Scaffold(
-        appBar: _buildNewsBar(context),
+        appBar: searchBar.build(context),
+        key: _scaffoldKey,
         backgroundColor: Color(0xff60A1DD),
         body: Center(
           child: _buildNewsList(),
@@ -111,7 +114,27 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
     );
   }
 
+  Widget _buildEmptyNewsListIndicator() {
+    return Container(
+      child: Center(
+        child: Column(
+          children: [
+            new Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.network("https://img.icons8.com/cotton/2x/empty-box.png")
+            ),
+            _emptyNewsListText,
+          ],
+        )
+      ),
+    );
+  }
+
   Widget _buildNewsList(){
+      if(newsList.length == 0 && !isLoading) {
+        return _buildEmptyNewsListIndicator();
+      }
+
       return ListView.builder(
           controller: _sc,
           itemCount: newsList.length,
@@ -156,68 +179,43 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
       );
   }
 
-  // FutureBuilder _newsRecordData() {
-  //   return FutureBuilder<NewsRecords>(
-  //     future: fetchNewsRecord(page),
-  //     builder: (BuildContext context, AsyncSnapshot<NewsRecords> snapshot){
-  //       if (snapshot.hasData) {
-  //         return _newsRecords(snapshot.data);
-  //       }else {
-  //         return Center(child: CircularProgressIndicator());
-  //       }
-  //     },
-  //   );
-  // }
-
-  void _searchPressed() {
+  void onSubmitted(String value) async {
+    // reset to initial page state
+    int start = 0;
+    int end = 9;
+    var newsRecords = await restApiServices.fetchNewsRecords(start.toString(), end.toString(), value);
     setState(() {
-      if (this._searchIcon.icon == Icons.search) {
-        this._searchIcon = new Icon(Icons.close);
-        this._appBarTitle = new TextField(
-          controller: _filter,
-          decoration: new InputDecoration(
-              prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
-        );
-      } else {
-        this._searchIcon = new Icon(Icons.search);
-        this._appBarTitle = new Text('Search News');
-        filteredNames = names;
-        _filter.clear();
-      }
+      _scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text('Search : $value')));
+      from = start + pageIncrement;
+      to = end + pageIncrement;
+      newsList = [...newsRecords.newsModel.toList()];
+      searchText = value;
     });
   }
 
-  Widget _buildList() {
-    if (!(_searchText.isEmpty)) {
-      List tempList = new List();
-      for (int i = 0; i < filteredNames.length; i++) {
-        if (filteredNames[i]['name']
-            .toLowerCase()
-            .contains(_searchText.toLowerCase())) {
-          tempList.add(filteredNames[i]);
-        }
-      }
-      filteredNames = tempList;
-    }
-    return ListView.builder(
-      itemCount: names == null ? 0 : filteredNames.length,
-      itemBuilder: (BuildContext context, int index) {
-        return new ListTile(
-          title: Text(filteredNames[index]['name']),
-          onTap: () => print(filteredNames[index]['name']),
-        );
-      },
-    );
+  _NewsLayoutScreenState() {
+    searchBar = new SearchBar(
+        inBar: false,
+        buildDefaultAppBar: _buildNewsBar,
+        setState: setState,
+        onSubmitted: onSubmitted,
+        onCleared: () {
+          print("cleared");
+        },
+        onClosed: () {
+          print("closed");
+        });
   }
 
-  Widget _buildNewsBar(BuildContext context) {
+  AppBar _buildNewsBar(BuildContext context) {
     return new AppBar(
       centerTitle: false,
       title: _appBarTitle,
-      leading: new IconButton(
-        icon: _searchIcon,
-        onPressed: _searchPressed,
-      ),
+        actions: [searchBar.getSearchAction(context)]
+      // leading: new IconButton(
+      //   icon: _searchIcon,
+      //   onPressed: _searchPressed,
+      // ),
     );
   }
 
