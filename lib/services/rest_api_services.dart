@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:gala_sejahtera/models/covid_cases_records.dart';
+
 import 'package:gala_sejahtera/models/daily_cases.dart';
 import 'package:gala_sejahtera/models/general_cases.dart';
 import 'package:gala_sejahtera/models/news_records.dart';
@@ -12,19 +12,8 @@ import 'ApiEngine.dart';
 class RestApiServices {
   Future<Map> reverseGeocoding(double latitude, double longitude) async {
     final response = await http.get(
-        'https://us1.locationiq.com/v1/reverse.php?key=$LOCATION_IQ_TOKEN&lat=$latitude&lon=$longitude&format=json');
-    print(jsonDecode(response.body));
+        'https://us1.locationiq.com/v1/reverse.php?key=$LOCATION_IQ_TOKEN&lat=$latitude&lon=$longitude&format=json&zoom=18');
     return jsonDecode(response.body);
-  }
-
-  Future<CovidCasesRecords> fetchCovidCasesRecordsData() async {
-    final response =
-        await http.get('https://knowyourzone.xyz/api/data/covid19/latest');
-    if (response.statusCode == 200) {
-      return CovidCasesRecords.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load covid data');
-    }
   }
 
   Future<NewsRecords> fetchNewsRecords([String start, String end]) async {
@@ -84,11 +73,14 @@ class RestApiServices {
     return result;
   }
 
-  Future<Map> getCaseByDistrict(String district) async {
+  Future<Map> getCaseByDistrict(String accessToken, String district) async {
     String url = '$API_BASE_URL$GET_CASE_BY_DISTRICT$district';
-    print(url);
     ApiEngine apiEngine = new ApiEngine();
-    var result = await apiEngine.get(url);
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken'
+    };
+    var result = await apiEngine.get(url, null, requestHeaders);
 
     return result['data'];
   }
@@ -101,6 +93,21 @@ class RestApiServices {
       'Authorization': 'Bearer $accessToken'
     };
     var result = await apiEngine.post(url, null, requestHeaders);
+    return result;
+  }
+
+  Future<Map> getNearbyUsers(String accessToken, String userId, double latitude,
+      double longitude) async {
+    String url = '$API_BASE_URL$GET_NEARBY_USERS';
+    ApiEngine apiEngine = new ApiEngine();
+    Map input = {
+      'user': {'id': "$userId", 'lat': "$latitude", 'long': "$longitude"}
+    };
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken'
+    };
+    var result = await apiEngine.post(url, input, requestHeaders);
     return result;
   }
 

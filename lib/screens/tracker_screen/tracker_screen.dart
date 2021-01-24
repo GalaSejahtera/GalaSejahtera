@@ -1,16 +1,17 @@
 import 'dart:async';
-import 'package:geolocator/geolocator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gala_sejahtera/models/covid_cases_records.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:gala_sejahtera/services/rest_api_services.dart';
+import 'package:gala_sejahtera/utils/constants.dart';
+import 'package:gala_sejahtera/utils/notification_helper.dart';
 import 'package:gala_sejahtera/widgets/custom_autocomplete.dart';
 import 'package:gala_sejahtera/widgets/custom_iconbutton.dart';
 import 'package:gala_sejahtera/widgets/display_box.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gala_sejahtera/widgets/history_component.dart';
-import 'package:gala_sejahtera/utils/notification_helper.dart';
-import 'package:gala_sejahtera/utils/constants.dart';
+import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 
 class TrackerScreen extends StatefulWidget {
   @override
@@ -20,10 +21,8 @@ class TrackerScreen extends StatefulWidget {
 class _TrackerScreenState extends State<TrackerScreen> {
   RestApiServices restApiServices = RestApiServices();
   TextEditingController controller = TextEditingController();
-  bool showHistory = false;
   bool trackLocation = false;
 
-  Future<CovidCasesRecords> covidCasesRecords;
   String myDistrictCases = "0";
   String selected = "";
   String districtCaseNumber = "";
@@ -36,22 +35,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
   @override
   void initState() {
     super.initState();
-    covidCasesRecords = restApiServices.fetchCovidCasesRecordsData();
     initNotification();
-  }
-
-  void getMyDistrictCases(double latitude, double longitude) async {
-    // get the user district
-    Map myLocation =
-        await restApiServices.reverseGeocoding(latitude, longitude);
-    String myDistrict = myLocation['address']['county'];
-
-    // get number of cases based on the user district
-    Map response = await restApiServices.getCaseByDistrict(myDistrict);
-
-    setState(() {
-      myDistrictCases = response['total'];
-    });
   }
 
   void checkLocationPermission() async {
@@ -103,24 +87,21 @@ class _TrackerScreenState extends State<TrackerScreen> {
     ));
   }
 
-  void countinuousLocationTracking() async {
+  void countinuousLocationTracking(token, userId) async {
     if (trackLocation) {
       // update location every 5 seconds
       locationSubscriber = Geolocator.getPositionStream(
               desiredAccuracy: LocationAccuracy.high,
               intervalDuration: new Duration(seconds: 60))
           .listen((Position position) async {
-        getMyDistrictCases(position.latitude, position.longitude);
-        print(position == null
-            ? 'Unknown'
-            : position.latitude.toString() +
-                ', ' +
-                position.longitude.toString());
-        showNotification(
-            "Your Location",
-            position.latitude.toString() +
-                "  " +
-                position.longitude.toString());
+        getMyDistrictCases(token, position.latitude, position.longitude);
+        int isSymtomticUser = await getNearbyUser(
+            token, userId, position.latitude, position.longitude);
+
+        if (isSymtomticUser > 0) {
+          showNotification("Symtomtic User(s) Nearby!",
+              "Watch out! $isSymtomticUser user(s) around you. Please practice social distancing!");
+        }
       });
 
       return;
@@ -132,8 +113,50 @@ class _TrackerScreenState extends State<TrackerScreen> {
     }
   }
 
-  void getCaseByDistrict(district) async {
-    Map response = await restApiServices.getCaseByDistrict(district);
+  // get nearby symtomtic users
+  Future<int> getNearbyUser(
+      String token, String userId, double latitude, double longitude) async {
+    Map nearbyUsers = await restApiServices.getNearbyUsers(
+        token, userId, latitude, longitude);
+
+    return int.parse(nearbyUsers['userNum']);
+  }
+
+  // get the user current location's district and get the number of cases in the user's district
+  void getMyDistrictCases(
+      String token, double latitude, double longitude) async {
+    // get the user district
+    Map myLocation =
+        await restApiServices.reverseGeocoding(latitude, longitude);
+    String myDistrict = myLocation['address']['county'];
+
+    if (myDistrict == null) {
+      myDistrict = myLocation['address']['region'];
+    }
+
+    if (myDistrict == null) {
+      myDistrict = myLocation['address']['city'];
+    }
+
+    // remap
+    for (var district in MALAYSIA_DISTRICTS) {
+      if (myDistrict.contains(district)) {
+        myDistrict = district;
+
+        break;
+      }
+    }
+
+    // get number of cases based on the user district
+    Map response = await restApiServices.getCaseByDistrict(token, myDistrict);
+    setState(() {
+      myDistrictCases = response['total'];
+    });
+  }
+
+  // get the number of cases based on the search district
+  void getCaseByDistrict(token, district) async {
+    Map response = await restApiServices.getCaseByDistrict(token, district);
 
     setState(() {
       districtCaseNumber = response['total'];
@@ -142,6 +165,9 @@ class _TrackerScreenState extends State<TrackerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String token = Provider.of<AuthCredentials>(context).accessToken;
+    String userId = Provider.of<AuthCredentials>(context).id;
+
     return Container(
       alignment: Alignment.topCenter,
       margin: EdgeInsets.only(top: 40),
@@ -153,19 +179,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
           maxScale: 3.0,
           child: SvgPicture.asset('assets/images/malaysia.svg',
               semanticsLabel: 'Malaysia Map'),
-        ),
-        Positioned(
-          bottom: 30,
-          left: 35,
-          child: CustomIconButton(
-              title: "History",
-              icon: Icon(Icons.history),
-              active: showHistory,
-              onPressed: () {
-                setState(() {
-                  showHistory = !showHistory;
-                });
-              }),
         ),
         Positioned(
           bottom: 30,
@@ -187,7 +200,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
                   checkLocationPermission();
                 }
 
-                countinuousLocationTracking();
+                countinuousLocationTracking(token, userId);
               }),
         ),
         Column(
@@ -197,7 +210,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
               child: CustomAutocomplete(
                   typeAheadController: controller,
                   onChanged: (value) {
-                    getCaseByDistrict(value);
+                    getCaseByDistrict(token, value);
                     setState(() {
                       selected = value;
                       controller.text = value;
@@ -206,25 +219,16 @@ class _TrackerScreenState extends State<TrackerScreen> {
                   hintText: 'Search for district',
                   suggestions: districtList),
             ),
-            if (!showHistory)
-              Row(children: <Widget>[
-                DisplayBox(
-                  title: '10',
-                  description: "Nearby Symptomatic Users",
-                ),
-                DisplayBox(
-                  title: myDistrictCases,
-                  description: "Covid-19 Cases in Your District",
-                ),
-              ]),
-            if (showHistory)
-              HistoryComponent(
-                  districts: ["Kuala Lumpur", "Selangor", "Johor"],
-                  onClose: () {
-                    setState(() {
-                      showHistory = false;
-                    });
-                  }),
+            Row(children: <Widget>[
+              DisplayBox(
+                title: '10',
+                description: "Nearby Symptomatic Users",
+              ),
+              DisplayBox(
+                title: myDistrictCases,
+                description: "Covid-19 Cases in Your District",
+              ),
+            ]),
             if (selected != "")
               Row(children: <Widget>[
                 DisplayBox(
