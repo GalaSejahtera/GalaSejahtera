@@ -112,7 +112,7 @@ class RestApiServices {
   }
 
   Future<Map> createReport(
-      String id, bool hasSymptom, List<String> results) async {
+      String id, bool hasSymptom, List<bool> results) async {
     String url = '$API_BASE_URL' + 'v1/reports/0';
     // print(url);
     Map input = {
@@ -126,6 +126,14 @@ class RestApiServices {
   Future<List> getReports(String id) async {
     String url =
         '$API_BASE_URL' + 'v1/reports?filterItem=userId&filterValue=$id';
+    // print(url);
+    ApiEngine apiEngine = new ApiEngine();
+    var result = await apiEngine.get(url);
+    return result['data'];
+  }
+
+  Future<List> getReport(String id) async {
+    String url = '$API_BASE_URL' + 'v1/reports/$id';
     // print(url);
     ApiEngine apiEngine = new ApiEngine();
     var result = await apiEngine.get(url);

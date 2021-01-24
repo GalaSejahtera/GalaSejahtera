@@ -3,6 +3,7 @@ import 'package:gala_sejahtera/screens/screening_screen/screening_screen.dart';
 import 'take_assessment_screen.dart';
 import 'assessment_history.dart';
 import 'result.dart';
+import 'history_details.dart';
 
 class ScreeningNavigator extends StatefulWidget {
   @override
@@ -29,6 +30,8 @@ class _ScreeningNavigatorState extends State<ScreeningNavigator> {
                 return ResultScreen();
               case '/AssessmentHistory':
                 return AssessmentHistoryScreen();
+              case '/HistoryDetails':
+                return HistoryDetailsScreen();
             }
           },
         );
