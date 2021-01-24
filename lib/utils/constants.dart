@@ -28,6 +28,7 @@ const String CREATE_USER_ACCOUNT = "v1/users/0";
 const String USER_LOGIN = "v1/login";
 const String USER_LOGOUT = "v1/logout";
 const String GET_CASE_BY_DISTRICT = "v1/places/";
+const String CREATE_REPORTS = "v1/reports/0";
 
 const List<String> MALAYSIA_DISTRICTS = [
   "Klang",

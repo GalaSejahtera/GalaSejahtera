@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:gala_sejahtera/models/auth_credentials.dart';
+import 'package:gala_sejahtera/services/rest_api_services.dart';
 
 class AssessmentHistoryScreen extends StatefulWidget {
   @override
@@ -7,6 +12,24 @@ class AssessmentHistoryScreen extends StatefulWidget {
 }
 
 class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
+  RestApiServices restApiServices = RestApiServices();
+  List reports = [];
+
+  String getUserId() {
+    String id = Provider.of<AuthCredentials>(context, listen: false).id;
+    return id;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getReports();
+  }
+
+  void getReports() async {
+    reports = await restApiServices.getReports(getUserId());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,85 +57,21 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
             SizedBox(
               height: 44,
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Material(
-                elevation: 5.0,
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(20.0),
-                child: MaterialButton(
-                  onPressed: () => {},
-                  minWidth: 200.0,
-                  height: 80.0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: reports.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                      child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Symptomatic',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 28.0,
-                            ),
-                          ),
-                          Text(
-                            '7/12/2020',
-                            style: TextStyle(color: Colors.white70),
-                          )
-                        ],
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: Colors.white,
-                        size: 40.0,
-                      ),
+                      // ListTile(
+                      //   title: Text(reports[index]),
+                      // ),
                     ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Material(
-                elevation: 5.0,
-                color: Colors.green,
-                borderRadius: BorderRadius.circular(20.0),
-                child: MaterialButton(
-                  onPressed: () => {},
-                  minWidth: 200.0,
-                  height: 80.0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Asymptomatic',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 28.0,
-                            ),
-                          ),
-                          Text(
-                            '7/12/2020',
-                            style: TextStyle(color: Colors.white70),
-                          )
-                        ],
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: Colors.white,
-                        size: 40.0,
-                      ),
-                    ],
-                  ),
-                ),
+                  ));
+                },
               ),
             ),
           ],

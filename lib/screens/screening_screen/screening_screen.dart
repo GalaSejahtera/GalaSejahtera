@@ -15,7 +15,6 @@ class _ScreeningScreenState extends State<ScreeningScreen> {
   @override
   Widget build(BuildContext context) {
     String token = Provider.of<AuthCredentials>(context).accessToken;
-
     return Scaffold(
       backgroundColor: Color(0xff60A1DD),
       body: Padding(

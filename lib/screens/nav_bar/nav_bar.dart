@@ -28,7 +28,7 @@ class _NavBarState extends State<NavBar> {
   void _onItemTapped(int index) {
     setState(() {
       if (!isUserLogin()) {
-        if (index == 1 || index == 3) {
+        if (index == 1) {
           SweetAlert.show(
             context,
             subtitle: 'Login for more features.',
