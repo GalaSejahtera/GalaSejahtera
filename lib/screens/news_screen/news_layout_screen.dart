@@ -61,9 +61,6 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
 
      _sc.addListener(() {
        if(_sc.position.pixels == _sc.position.maxScrollExtent) {
-         print(searchText);
-         print(from);
-         print(to);
          fetchNewsRecord(from, to, searchText);
        }
      });
