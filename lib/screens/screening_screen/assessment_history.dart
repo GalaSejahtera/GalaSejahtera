@@ -26,8 +26,15 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
     getReports();
   }
 
+  List returnReports() {
+    return reports;
+  }
+
   void getReports() async {
-    reports = await restApiServices.getReports(getUserId());
+    List response = await restApiServices.getReports(getUserId());
+    setState(() {
+      reports = response;
+    });
   }
 
   @override
@@ -63,14 +70,29 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                 itemCount: reports.length,
                 itemBuilder: (context, index) {
                   return Card(
-                      child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      // ListTile(
-                      //   title: Text(reports[index]),
-                      // ),
-                    ],
-                  ));
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                          title: Text('Assessment History ${index + 1}'),
+                          subtitle: Text(
+                              new DateTime.fromMillisecondsSinceEpoch(
+                                      int.parse(reports[index]['createdAt']))
+                                  .toString()),
+                          trailing: Icon(Icons.more_vert),
+                          onTap: () => {
+                            Navigator.pushReplacementNamed(
+                                context, '/HistoryDetails',
+                                arguments: {
+                                  'answers': reports[index]['results'],
+                                  'index': index,
+                                  'hasSymptom': reports[index]['hasSymptom'],
+                                })
+                          },
+                        ),
+                      ],
+                    ),
+                  );
                 },
               ),
             ),

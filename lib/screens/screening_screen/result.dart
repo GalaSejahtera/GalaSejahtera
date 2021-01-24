@@ -38,20 +38,19 @@ class ResultScreen extends StatelessWidget {
   RestApiServices restApiServices = RestApiServices();
 
   Map data = {};
-  List<String> answers = [];
+  List<bool> answers = [];
 
   @override
   Widget build(BuildContext context) {
     data = ModalRoute.of(context).settings.arguments;
     answers = data['answers'];
     String id = Provider.of<AuthCredentials>(context).id;
-
     bool hasSymptom() {
-      List<String> first = answers.sublist(0, 4); //Q1 ~ Q4
-      List<String> last = answers.sublist(4, 11); //Q5 ~ Q11
-      if (first.where((element) => element == 'Yes').length >= 2)
+      List<bool> first = answers.sublist(0, 4); //Q1 ~ Q4
+      List<bool> last = answers.sublist(4, 11); //Q5 ~ Q11
+      if (first.where((element) => element == true).length >= 2)
         return true;
-      else if (last.where((element) => element == 'Yes').length >= 2)
+      else if (last.where((element) => element == true).length >= 2)
         return true;
       else
         return false;
@@ -68,7 +67,7 @@ class ResultScreen extends StatelessWidget {
           );
         });
         if (id != null) {
-          // restApiServices.createReport(id, hasSymptom());
+          restApiServices.createReport(id, hasSymptom(), answers);
         }
       },
       child: Scaffold(
@@ -102,7 +101,7 @@ class ResultScreen extends StatelessWidget {
                           title: Text(questions[index]),
                         ),
                         ListTile(
-                          title: Text(answers[index]),
+                          title: Text(answers[index] == true ? 'Yes' : 'No'),
                         ),
                       ],
                     ));

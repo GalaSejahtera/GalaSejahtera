@@ -11,7 +11,7 @@ class TakeAssessmentScreen extends StatefulWidget {
 }
 
 class _TakeAssessmentScreenState extends State<TakeAssessmentScreen> {
-  List<String> answers = [];
+  List<bool> answers = [];
 
   @override
   void dispose() {
@@ -19,7 +19,7 @@ class _TakeAssessmentScreenState extends State<TakeAssessmentScreen> {
     assessmentQuestion.reset();
   }
 
-  void saveAnswer(String answer) {
+  void saveAnswer(bool answer) {
     answers.add(answer);
     if (assessmentQuestion.isLast()) {
       Navigator.pushReplacementNamed(context, '/Result', arguments: {
@@ -73,7 +73,7 @@ class _TakeAssessmentScreenState extends State<TakeAssessmentScreen> {
               title: 'Yes',
               color: Colors.green,
               onPressed: () {
-                saveAnswer("Yes");
+                saveAnswer(true);
               },
             ),
             SizedBox(
@@ -83,7 +83,7 @@ class _TakeAssessmentScreenState extends State<TakeAssessmentScreen> {
               title: 'No',
               color: Colors.red,
               onPressed: () {
-                saveAnswer("No");
+                saveAnswer(false);
               },
             )
           ],
