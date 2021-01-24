@@ -1,9 +1,9 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:gala_sejahtera/models/general_cases.dart';
 import 'package:gala_sejahtera/screens/login_screen/login_screen.dart';
+import 'package:gala_sejahtera/screens/reset_password/update_password_screen.dart';
 import 'package:gala_sejahtera/services/rest_api_services.dart';
 import 'package:gala_sejahtera/utils/constants.dart';
 import 'package:gala_sejahtera/widgets/display_box.dart';
@@ -48,24 +48,38 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget generateButton() {
+  List<Widget> generateButton() {
     String accessToken = Provider.of<AuthCredentials>(context).accessToken;
     if (accessToken == null) {
-      return RoundedButton(
-        title: 'Login For More Features',
-        color: Colors.black,
-        onPressed: () {
-          Navigator.pushNamed(context, LoginScreen.id);
-        },
-      );
+      return [
+        RoundedButton(
+          title: 'Login For More Features',
+          color: Colors.black,
+          onPressed: () {
+            Navigator.pushNamed(context, LoginScreen.id);
+          },
+        )
+      ];
     } else
-      return RoundedButton(
-        title: 'Logout',
-        color: Colors.redAccent,
-        onPressed: () {
-          userLogout(accessToken);
-        },
-      );
+      return [
+        RoundedButton(
+          title: 'Logout',
+          color: Colors.redAccent,
+          onPressed: () {
+            userLogout(accessToken);
+          },
+        ),
+        SizedBox(
+          height: 24.0,
+        ),
+        RoundedButton(
+          title: 'Change password',
+          color: Colors.blueAccent,
+          onPressed: () {
+            Navigator.pushNamed(context, UpdatePasswordScreen.id);
+          },
+        )
+      ];
   }
 
   @override
@@ -90,7 +104,9 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: Align(
               alignment: FractionalOffset.bottomCenter,
-              child: generateButton(),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: generateButton()),
             ),
           )
         ],

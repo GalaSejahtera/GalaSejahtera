@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gala_sejahtera/models/auth_credentials.dart';
 import 'package:gala_sejahtera/screens/nav_bar/nav_bar.dart';
+import 'package:gala_sejahtera/services/rest_api_services.dart';
 import 'package:gala_sejahtera/utils/constants.dart';
 import 'package:gala_sejahtera/widgets/custom_field.dart';
-import 'package:gala_sejahtera/services/rest_api_services.dart';
 import 'package:gala_sejahtera/widgets/rounded_button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
@@ -110,13 +110,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
       // navigate
       Navigator.pushNamed(context, NavBar.id);
-      return;
+    } else {
+      SweetAlert.show(context, subtitle: response['error']);
     }
 
-    SweetAlert.show(
-      context,
-      subtitle: response['error']
-    );
+    setState(() {
+      showSpinner = false;
+    });
   }
 
   @override
@@ -125,6 +125,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        title: Text(
+          'Register',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
       ),
       backgroundColor: Color(0xff60A1DD),
       body: ModalProgressHUD(
@@ -145,7 +151,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
               SizedBox(
-                height: 48.0,
+                height: 30.0,
               ),
               CustomField(
                 keyboardType: TextInputType.emailAddress,
@@ -206,9 +212,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     showSpinner = true;
                   });
                   registerUser();
-                  setState(() {
-                    showSpinner = false;
-                  });
                 },
               ),
             ],

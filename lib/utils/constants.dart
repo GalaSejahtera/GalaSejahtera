@@ -30,6 +30,7 @@ const String USER_LOGOUT = "v1/logout";
 const String GET_CASE_BY_DISTRICT = "v1/places/";
 const String GET_NEARBY_USERS = "v1/client/users/nearby";
 const String CREATE_REPORTS = "v1/reports/0";
+const String PASSWORD_RESET = "v1/passwordreset";
 
 const List<String> MALAYSIA_DISTRICTS = [
   "Klang",
