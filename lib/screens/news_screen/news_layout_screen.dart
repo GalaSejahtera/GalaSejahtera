@@ -24,7 +24,6 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
   RestApiServices restApiServices = RestApiServices();
   final TextEditingController _filter = new TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  Widget _appBarTitle = new Text('Search News');
   Widget _emptyNewsListText = new Text('No Result!',
       style : TextStyle(
       color: Colors.grey[800],
@@ -201,14 +200,38 @@ class _NewsLayoutScreenState extends State<NewsLayoutScreen> {
         },
         onClosed: () {
           print("closed");
-        });
+        },
+        // showClearButton: true,
+    );
+  }
+
+  void _clearSearchText() async {
+    int start = 0;
+    int end = 0;
+
+    var newsRecords = await restApiServices.fetchNewsRecords(start.toString(), end.toString(), "");
+    setState(() {
+      from = start + pageIncrement;
+      to = end + pageIncrement;
+      newsList = [...newsRecords.newsModel.toList()];
+      searchText = "";
+    });
   }
 
   AppBar _buildNewsBar(BuildContext context) {
+    var _actionsList = [searchBar.getSearchAction(context)];
+    var barsText = 'Search News';
+    if(searchText.length > 0) {
+      barsText = searchText;
+      _actionsList = [searchBar.getSearchAction(context),
+        IconButton(icon: Icon(Icons.cancel), onPressed: _clearSearchText),
+      ];
+    }
+
     return new AppBar(
       centerTitle: false,
-      title: _appBarTitle,
-        actions: [searchBar.getSearchAction(context)]
+      title: new Text(barsText),
+        actions: _actionsList
       // leading: new IconButton(
       //   icon: _searchIcon,
       //   onPressed: _searchPressed,
