@@ -43,7 +43,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
     // device location service
     isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
 
-     // app permission to access location
+    // app permission to access location
     permission = await Geolocator.checkPermission();
 
     // check if location service is disabled
@@ -56,6 +56,8 @@ class _TrackerScreenState extends State<TrackerScreen> {
         content: Text("Please turn on location service!"),
         backgroundColor: Color(0xFFFF0000),
       ));
+
+      return;
     }
 
     // handle location disabled forever (never ask again)
@@ -68,6 +70,8 @@ class _TrackerScreenState extends State<TrackerScreen> {
         content: Text("Please allow the application to access location!"),
         backgroundColor: Color(0xFFFF0000),
       ));
+
+      return;
     }
 
     // permission to access location is denied, request for the permission
@@ -81,6 +85,8 @@ class _TrackerScreenState extends State<TrackerScreen> {
       setState(() {
         trackLocation = false;
       });
+
+      return;
     }
 
     Scaffold.of(context).showSnackBar(SnackBar(
@@ -103,11 +109,10 @@ class _TrackerScreenState extends State<TrackerScreen> {
         // get the symtoptic nearby users
         int symptomaticUser = await getNearbyUser(
             token, userId, position.latitude, position.longitude);
-          
-        
-          setState(() {
-            nearbySymptomaticUsers = symptomaticUser.toString();
-          });
+
+        setState(() {
+          nearbySymptomaticUsers = symptomaticUser.toString();
+        });
 
         // if there is symptomatic user, show notification
         if (symptomaticUser > 0) {
@@ -120,6 +125,12 @@ class _TrackerScreenState extends State<TrackerScreen> {
     }
 
     if (locationSubscriber != null) {
+      print('Cancel subscriber');
+      setState(() {
+        myDistrictCases = "0";
+        nearbySymptomaticUsers = "0";
+      });
+
       locationSubscriber.cancel();
       locationSubscriber = null;
     }
@@ -140,6 +151,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
     // get the user district using latitude and longitude
     Map myLocation =
         await restApiServices.reverseGeocoding(latitude, longitude);
+    print(myLocation);
     String myDistrict = myLocation['address']['county'];
 
     if (myDistrict == null) {
@@ -173,6 +185,14 @@ class _TrackerScreenState extends State<TrackerScreen> {
     setState(() {
       districtCaseNumber = response['total'];
     });
+  }
+
+  @override
+  void dispose() {
+    locationSubscriber.cancel();
+    locationSubscriber = null;
+
+    super.dispose();
   }
 
   @override
