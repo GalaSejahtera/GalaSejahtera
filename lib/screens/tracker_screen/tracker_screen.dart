@@ -9,7 +9,6 @@ import 'package:gala_sejahtera/utils/notification_helper.dart';
 import 'package:gala_sejahtera/widgets/custom_autocomplete.dart';
 import 'package:gala_sejahtera/widgets/custom_iconbutton.dart';
 import 'package:gala_sejahtera/widgets/display_box.dart';
-import 'package:gala_sejahtera/widgets/history_component.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -21,8 +20,8 @@ class TrackerScreen extends StatefulWidget {
 class _TrackerScreenState extends State<TrackerScreen> {
   RestApiServices restApiServices = RestApiServices();
   TextEditingController controller = TextEditingController();
-  bool trackLocation = false;
 
+  bool trackLocation = false;
   String myDistrictCases = "0";
   String selected = "";
   String districtCaseNumber = "";
@@ -38,6 +37,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
     initNotification();
   }
 
+  // request for location permission and check if user enable location service
   void checkLocationPermission() async {
     // app permission to access location
     permission = await Geolocator.checkPermission();
@@ -87,20 +87,25 @@ class _TrackerScreenState extends State<TrackerScreen> {
     ));
   }
 
-  void countinuousLocationTracking(token, userId) async {
+  // track the user location continuously
+  void trackUserLocation(token, userId) async {
     if (trackLocation) {
-      // update location every 5 seconds
+      // update location every 60 seconds
       locationSubscriber = Geolocator.getPositionStream(
               desiredAccuracy: LocationAccuracy.high,
               intervalDuration: new Duration(seconds: 60))
           .listen((Position position) async {
+        // check for user current district
         getMyDistrictCases(token, position.latitude, position.longitude);
-        int isSymtomticUser = await getNearbyUser(
+
+        // get the symtoptic nearby users
+        int symptomaticUser = await getNearbyUser(
             token, userId, position.latitude, position.longitude);
 
-        if (isSymtomticUser > 0) {
-          showNotification("Symtomtic User(s) Nearby!",
-              "Watch out! $isSymtomticUser user(s) around you. Please practice social distancing!");
+        // if there is symptomatic user, show notification
+        if (symptomaticUser > 0) {
+          showNotification("Symptomatic User(s) Nearby!",
+              "Watch out! $symptomaticUser user(s) around you. Please practice social distancing!");
         }
       });
 
@@ -113,7 +118,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
     }
   }
 
-  // get nearby symtomtic users
+  // get nearby users
   Future<int> getNearbyUser(
       String token, String userId, double latitude, double longitude) async {
     Map nearbyUsers = await restApiServices.getNearbyUsers(
@@ -125,7 +130,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
   // get the user current location's district and get the number of cases in the user's district
   void getMyDistrictCases(
       String token, double latitude, double longitude) async {
-    // get the user district
+    // get the user district using latitude and longitude
     Map myLocation =
         await restApiServices.reverseGeocoding(latitude, longitude);
     String myDistrict = myLocation['address']['county'];
@@ -155,7 +160,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
   }
 
   // get the number of cases based on the search district
-  void getCaseByDistrict(token, district) async {
+  void searchDistrictCases(token, district) async {
     Map response = await restApiServices.getCaseByDistrict(token, district);
 
     setState(() {
@@ -200,7 +205,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
                   checkLocationPermission();
                 }
 
-                countinuousLocationTracking(token, userId);
+                trackUserLocation(token, userId);
               }),
         ),
         Column(
@@ -210,7 +215,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
               child: CustomAutocomplete(
                   typeAheadController: controller,
                   onChanged: (value) {
-                    getCaseByDistrict(token, value);
+                    searchDistrictCases(token, value);
                     setState(() {
                       selected = value;
                       controller.text = value;
