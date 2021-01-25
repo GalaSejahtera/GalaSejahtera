@@ -45,6 +45,7 @@ class ResultScreen extends StatelessWidget {
     data = ModalRoute.of(context).settings.arguments;
     answers = data['answers'];
     String id = Provider.of<AuthCredentials>(context).id;
+
     bool hasSymptom() {
       List<bool> first = answers.sublist(0, 4); //Q1 ~ Q4
       List<bool> last = answers.sublist(4, 11); //Q5 ~ Q11
@@ -54,6 +55,10 @@ class ResultScreen extends StatelessWidget {
         return true;
       else
         return false;
+    }
+
+    void createReport() async {
+      await restApiServices.createReport(id, hasSymptom(), answers);
     }
 
     return StatefulWrapper(
@@ -67,7 +72,7 @@ class ResultScreen extends StatelessWidget {
           );
         });
         if (id != null) {
-          restApiServices.createReport(id, hasSymptom(), answers);
+          createReport();
         }
       },
       child: Scaffold(
