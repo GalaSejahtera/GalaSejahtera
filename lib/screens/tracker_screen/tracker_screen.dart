@@ -25,6 +25,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
   String myDistrictCases = "0";
   String selected = "";
   String districtCaseNumber = "";
+  String nearbySymptomaticUsers = "0";
   List<String> districtList = MALAYSIA_DISTRICTS;
 
   LocationPermission permission;
@@ -39,10 +40,11 @@ class _TrackerScreenState extends State<TrackerScreen> {
 
   // request for location permission and check if user enable location service
   void checkLocationPermission() async {
-    // app permission to access location
-    permission = await Geolocator.checkPermission();
     // device location service
     isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+
+     // app permission to access location
+    permission = await Geolocator.checkPermission();
 
     // check if location service is disabled
     if (!isLocationServiceEnabled) {
@@ -101,6 +103,11 @@ class _TrackerScreenState extends State<TrackerScreen> {
         // get the symtoptic nearby users
         int symptomaticUser = await getNearbyUser(
             token, userId, position.latitude, position.longitude);
+          
+        
+          setState(() {
+            nearbySymptomaticUsers = symptomaticUser.toString();
+          });
 
         // if there is symptomatic user, show notification
         if (symptomaticUser > 0) {
@@ -226,7 +233,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
             ),
             Row(children: <Widget>[
               DisplayBox(
-                title: '10',
+                title: nearbySymptomaticUsers,
                 description: "Nearby Symptomatic Users",
               ),
               DisplayBox(
