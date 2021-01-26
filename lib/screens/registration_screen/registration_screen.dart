@@ -23,10 +23,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String emailErrorMessage = '';
   bool emailError = false;
 
-  String fullName;
-  String fullNameErrorMessage = '';
-  bool fullNameError = false;
-
   String username;
   String usernameErrorMessage = '';
   bool usernameError = false;
@@ -48,21 +44,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       } else {
         emailError = false;
         emailErrorMessage = '';
-      }
-    });
-  }
-
-  void validateFullName(String value) {
-    setState(() {
-      if (value.isEmpty) {
-        fullNameError = true;
-        fullNameErrorMessage = 'Full Name is empty';
-      } else if (value.length < 6) {
-        fullNameError = true;
-        fullNameErrorMessage = 'Full Name is less than 6';
-      } else {
-        fullNameError = false;
-        fullNameErrorMessage = '';
       }
     });
   }
@@ -163,18 +144,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   email = value;
                 },
                 hintText: 'Email',
-              ),
-              SizedBox(
-                height: 8.0,
-              ),
-              CustomField(
-                error: fullNameError,
-                errorMessage: fullNameErrorMessage,
-                onChanged: (value) {
-                  validateFullName(value);
-                  fullName = value;
-                },
-                hintText: 'Full name',
               ),
               SizedBox(
                 height: 8.0,
