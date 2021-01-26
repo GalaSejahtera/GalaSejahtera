@@ -78,6 +78,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                           subtitle: Text(
                               new DateTime.fromMillisecondsSinceEpoch(
                                       int.parse(reports[index]['createdAt']))
+                                  .toLocal()
                                   .toString()),
                           trailing: Icon(Icons.more_vert),
                           onTap: () => {
