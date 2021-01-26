@@ -103,7 +103,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 height: 24.0,
               ),
               RoundedButton(
-                title: 'Send Verification Email',
+                title: 'Reset Password',
                 color: Colors.lightBlueAccent,
                 onPressed: () async {
                   setState(() {
