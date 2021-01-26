@@ -15,9 +15,8 @@ class ApiEngine {
     switch (response.statusCode) {
       case 400:
         throw BadRequestException();
-      case 401:
       case 409:
-        throw BadRequestException('${response.statusCode}');
+        throw ResourceConflictException();
       case 403:
         throw UnauthorisedException();
       case 500:
@@ -27,11 +26,12 @@ class ApiEngine {
     }
   }
 
-  Future<Map<String, dynamic>> get(String url, [Map<String, String> queryParams, Map header]) async {
+  Future<Map<String, dynamic>> get(String url,
+      [Map<String, String> queryParams, Map header]) async {
     Map<String, String> defaultHeader = {'Content-Type': 'application/json'};
     header = header ?? defaultHeader;
 
-    if(queryParams != null) {
+    if (queryParams != null) {
       String queryString = Uri(queryParameters: queryParams).query;
       url += '?$queryString';
     }
@@ -51,7 +51,8 @@ class ApiEngine {
     }
   }
 
-  Future<Map<String, dynamic>> post(String url, Map inputData, [Map header]) async {
+  Future<Map<String, dynamic>> post(String url, Map inputData,
+      [Map header]) async {
     Map<String, String> defaultHeader = {
       'Content-Type': 'application/json; charset=UTF-8'
     };

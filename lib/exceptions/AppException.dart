@@ -25,3 +25,7 @@ class UnauthorisedException extends AppException {
 class InvalidInputException extends AppException {
   InvalidInputException([String message]) : super(message, "Invalid Input: ");
 }
+
+class ResourceConflictException extends AppException {
+  ResourceConflictException([message]) : super(message, "Resources Conflict: ");
+}
